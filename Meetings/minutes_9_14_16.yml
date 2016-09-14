@@ -1,0 +1,12 @@
+date: September 12, 2016
+meeting_type: ta
+attendance: [<mitchelt>, <justynth>, <orkhiyae>]
+absent: []
+excused_absences: []
+task_progress: [
+  {ubit: <mitchelt>, progress: First meeting - Build GUI for Presentation},
+  {ubit: <justynth>, progress: First meeting - Build GUI for Presentation},
+  {ubit: <orkhiyae>, progress: First meeting - Build GUI for Presentation}
+  ]
+issues: []
+Notes:
