@@ -1,2 +1,2 @@
 # Void
-Encrypted and secure text communication as well file transmission
+Encrypted and secure text communication as well as file transmission.
