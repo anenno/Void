@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Button layoutX="273.0" layoutY="227.0" mnemonicParsing="false" text="Login" />
+      <TextField layoutX="224.0" layoutY="161.0" promptText="Username or Email" />
+      <TextField layoutX="225.0" layoutY="196.0" promptText="Password" />
+      <Label layoutX="215.0" layoutY="259.0" prefHeight="17.0" prefWidth="168.0" text="Forgot username or password?" />
+   </children>
+</Pane>
