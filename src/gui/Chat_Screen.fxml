@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ToolBar layoutX="4.0" layoutY="112.0" orientation="VERTICAL" prefHeight="160.0" prefWidth="100.0">
+         <items>
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="106.0" text="Contacts" />
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="107.0" text="Messages" />
+            <Button mnemonicParsing="false" text="New Message" />
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="108.0" text="Account" />
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="106.0" text="Settings" />
+         </items>
+      </ToolBar>
+      <Label layoutX="4.0" layoutY="7.0" prefHeight="28.0" prefWidth="156.0" text="UserName">
+         <font>
+            <Font size="23.0" />
+         </font>
+      </Label>
+      <ScrollBar layoutX="569.0" layoutY="26.0" orientation="VERTICAL" prefHeight="351.0" prefWidth="17.0" />
+      <TextArea layoutX="160.0" layoutY="35.0" prefHeight="195.0" prefWidth="404.0" text="Username: Message sent by other user [Time Stamp]&#10;Your Name: Message sent by you [Time Stamp]" />
+      <TextArea layoutX="160.0" layoutY="264.0" prefHeight="67.0" prefWidth="404.0" promptText="Type Message.." />
+      <Button layoutX="329.0" layoutY="337.0" mnemonicParsing="false" text="Send" />
+      <Button layoutX="164.0" layoutY="235.0" mnemonicParsing="false" text="File Transfer" />
+      <Button layoutX="267.0" layoutY="235.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="178.0" text="Message Duration (0)" />
+   </children>
+</Pane>
