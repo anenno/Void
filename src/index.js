@@ -9,7 +9,7 @@ app.get('/chatroom.html',function(req,res){
     res.sendFile(__dirname + '/chatroom.html');
 });
 http.listen(5000,function(){
-    console.log('listening on*:3000');
+    console.log('listening on*:5000');
 });
 //Shows when a user connects to index.html
 io.on('connection',function(socket){
