@@ -1,4 +1,4 @@
-date: September 28, 2016
+date: September 12, 2016
 meeting_type: ta
 attendance: [mitchelt, justynth, orkhiyae, ajnenno2]
 absent: []
@@ -18,4 +18,5 @@ issues:
   {ubit: ajnenno2, issue: Design GUI in HTML}
   ]
 Notes:
-  {Decide to focus more on Node.js and the possibility of looking into spark.}
+
+
