@@ -1,0 +1,21 @@
+date: October 5, 2016
+meeting_type: ta
+attendance: [mitchelt, justynth, ajnenno2]
+absent: []
+excused_absences: [orkhiyae]
+task_progress: 
+  [
+  {ubit: mitchelt, progress: node.js backend, messages appear in command line},
+  {ubit: justynth, progress: },
+  {ubit: orkhiyae, progress: },
+  {ubit: ajnenno2, progress: minor bugfixes}
+  ]
+issues: 
+  [
+  {ubit: mitchelt, issue: more backend node.js implementation},
+  {ubit: justynth, issue: implement socket.io or bugfixes},
+  {ubit: orkhiyae, issue: },
+  {ubit: ajnenno2, issue: make messages show up on the UI}
+  ]
+Notes:
+  {going to use node.js for backend, everyone is starting to get on the same page, progress should start ramping up}
