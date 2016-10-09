@@ -27,8 +27,12 @@ body {
 </head>
 <body>
 <div class="chat-log">
-  <form name="chat-log" action="index.js" method="get">
-
+  <form name="chat-log" action="localhost:5000" method="get">
+    <script type="text/javascript">
+      var div = document.getElementById("chat-log");
+      div.textContent = $('#msg').val('');
+      var text = div.textContent;
+    </script>
   </form>
 </div>
 <div class="message">
