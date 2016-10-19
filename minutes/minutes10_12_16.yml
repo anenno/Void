@@ -1,0 +1,21 @@
+date: October 12, 2016
+meeting_type: ta
+attendance: [mitchelt, ajnenno2]
+absent: []
+excused_absences: [orkhiyae, justynth] 
+task_progress: 
+  [
+  {ubit: mitchelt, progress: Day1 of Sprint3},
+  {ubit: justynth, progress: Day1 of Sprint3},
+  {ubit: orkhiyae, progress: Day1 of Sprint3},
+  {ubit: ajnenno2, progress: Day1 of Sprint3}
+  ]
+issues: 
+  [
+  {ubit: mitchelt, issue: Work on Socket.IO Implementation - different instances of each chatroom},
+  {ubit: justynth, issue: },
+  {ubit: orkhiyae, issue: },
+  {ubit: ajnenno2, issue: Work on access to 442 lab server aswell as updating chat room with actual text }
+  ]
+Notes:
+  { }
