@@ -60,8 +60,15 @@ h1 {
     room = $('#room').val();
     alias = $('#alias').val();
 
+    /*
+    Should add checks here if the room and alias entered are blank
+     */
+
+    //Calls 'enterRoom' on server
     socket.emit('enterRoom');
+    //Calls 'createalias' on server
     socket.emit('createalias',alias);
+    //Calls 'joinroom' on server
     socket.emit('joinroom',room);
 
   });
