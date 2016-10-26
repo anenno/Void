@@ -40,13 +40,33 @@ h1 {
      <h1>Void</h1>
      <div class="input-section">
        <form action="chatroom.html">
-         <input type="text" style="background-color: #1a1a1a; text-align: center;" name="RoomID" placeholder="Room ID"><br><br>
-         <input type="text" style="background-color: #1a1a1a; text-align: center;" name="alias" placeholder="Alias"><br><br>
-         <input type="submit" style="background-color: #1a1a1a; stroke-width: 0;" value="Enter Room">
+
+         <input id = "room" type="text" style="background-color: #1a1a1a; text-align: center;" name="RoomID" placeholder="Room ID"><br><br>
+         <input id = "alias" type="text" style="background-color: #1a1a1a; text-align: center;" name="alias" placeholder="Alias"><br><br>
+         <input id = "enter" type="submit" style="background-color: #1a1a1a; stroke-width: 0;" value="Enter Room">
+
        </form>
      </div>
 
    </div>
-
  </body>
+<script src="/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+  var socket = io();
+  var room;
+  var alias;
+  $('form').submit(function(){
+    room = $('#room').val();
+    alias = $('#alias').val();
+
+    socket.emit('enterRoom');
+    socket.emit('createalias',alias);
+    socket.emit('joinroom',room);
+
+  });
+
+
+</script>
+
 </html>
