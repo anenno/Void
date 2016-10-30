@@ -27,22 +27,32 @@ body {
 </head>
 <body>
 <div class="chat-log">
+<<<<<<< HEAD
   <form name="chat-log" action="localhost:5000" method="get">
     <script type="text/javascript">
       var div = document.getElementById("chat-log");
       div.textContent = $('#msg').val('');
       var text = div.textContent;
     </script>
+=======
   <form name="chat-log" action="server.js" method="get">
+
+>>>>>>> parent of a7aa9d0... Rooms /Alias's seem to be creating need to do more testing to be sure
   </form>
 </div>
 <div class="message">
   <form name="message" method="post">
 
     <input type="file" id="fileID" style="visibility: hidden;" />
+<<<<<<< HEAD
     <button type="button" href="#" onclick="document.getElementById('fileID').click(); return false;" style="display: inline-block; float: left; background-color: #1a1a1a; color: #f2f2f2; width: 10%; margin-left: 1vw; height: 5vh;" />Upload</button>
     <input id="msg" autocomplete="off" type="text" style="height: 5vh; color: #f2f2f2; width: 80%; background-color: #1a1a1a; display: inline-block; float: left; padding-left: 1vw; padding-right: 1vw;" name="message-input" value="">
     <input type="submit" autocomplete="off" style="width: 8%; color: #f2f2f2; background-color: #1a1a1a; display: inline-block; float: left; text-align: center; height: 5vh" name="SendButton" value="Send">
+=======
+    <button type="button" href="#" onclick="document.getElementById('fileID').click(); return false;" style="display: inline-block; float: left; background-color: #1a1a1a; color: #f2f2f2; width: 7vw; margin-left: 1vw; height: 3vh;" />Upload</button>
+    <input id="msg" type="text" style="height: 3vh; color: #f2f2f2; width: 87vw; background-color: #1a1a1a; display: inline-block; float: left; padding-left: 1vw; padding-right: 1vw;" name="message-input" value="">
+    <input type="submit" autocomplete="off" style="width: 4vw; color: #f2f2f2; background-color: #1a1a1a; display: inline-block; float: left; text-align: center; height: 3vh" name="SendButton" value="Send">
+>>>>>>> parent of eef906f... fixed random text that showed up in index.html and chatroom.html, restored changes to fix caching issues
 
   </form>
 </div>
