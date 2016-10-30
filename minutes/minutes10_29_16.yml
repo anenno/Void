@@ -1,0 +1,17 @@
+date: October 29, 2016
+meeting_type: group
+attendance: [orkhiyae, ajnenno2]
+
+
+task_progress: 
+  [
+  {ubit: orkhiyae, progress:Fixed scaling button issue and worked on making messages appear.},
+  {ubit: ajnenno2, progress:Fixed alot of the merge issues.  }
+  ]
+issues: 
+  [
+  {ubit: orkhiyae, issue: making messages appear has not been completed},
+  {ubit: ajnenno2, issue: Take a look more at making messages appear.}
+  ]
+Notes:
+  { }
