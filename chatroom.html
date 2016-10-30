@@ -33,6 +33,7 @@ body {
       div.textContent = $('#msg').val('');
       var text = div.textContent;
     </script>
+  <form name="chat-log" action="server.js" method="get">
   </form>
 </div>
 <div class="message">
@@ -40,8 +41,8 @@ body {
 
     <input type="file" id="fileID" style="visibility: hidden;" />
     <button type="button" href="#" onclick="document.getElementById('fileID').click(); return false;" style="display: inline-block; float: left; background-color: #1a1a1a; color: #f2f2f2; width: 7vw; margin-left: 1vw; height: 3vh;" />Upload</button>
-    <input id="msg" type="text" style="height: 3vh; color: #f2f2f2; width: 87vw; background-color: #1a1a1a; display: inline-block; float: left; padding-left: 1vw; padding-right: 1vw;" name="message-input" value="">
-    <input type="submit" style="width: 4vw; color: #f2f2f2; background-color: #1a1a1a; display: inline-block; float: left; text-align: center; height: 3vh" name="SendButton" value="Send">
+    <input id="msg" autocomplete="off" type="text" style="height: 3vh; color: #f2f2f2; width: 87vw; background-color: #1a1a1a; display: inline-block; float: left; padding-left: 1vw; padding-right: 1vw;" name="message-input" value="">
+    <input type="submit" autocomplete="off" style="width: 4vw; color: #f2f2f2; background-color: #1a1a1a; display: inline-block; float: left; text-align: center; height: 3vh" name="SendButton" value="Send">
 
   </form>
 </div>
