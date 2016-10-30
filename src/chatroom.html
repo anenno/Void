@@ -27,16 +27,13 @@ body {
 </head>
 <body>
 <div class="chat-log">
-  <form id ="chat" name="chat-log" action="server.js" method="get">
+  <form name="chat-log" action="index.js" method="get">
 
   </form>
 </div>
 <div class="message">
+  <form name="message" method="post">
 
-  <!--Removed POST from method. Was having issues with the chatroom not reloading
-  method="post"
-  -->
-  <form name="message" >
     <input type="file" id="fileID" style="visibility: hidden;" />
     <button type="button" href="#" onclick="document.getElementById('fileID').click(); return false;" style="display: inline-block; float: left; background-color: #1a1a1a; color: #f2f2f2; width: 7vw; margin-left: 1vw; height: 3vh;" />Upload</button>
     <input id="msg" type="text" style="height: 3vh; color: #f2f2f2; width: 87vw; background-color: #1a1a1a; display: inline-block; float: left; padding-left: 1vw; padding-right: 1vw;" name="message-input" value="">
@@ -48,32 +45,13 @@ body {
 <script src="/socket.io/socket.io.js"></script>
 <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
-  var socket = io.connect('http://localhost:5000');
-
-  /*
-    Listeners
-   */
-
-  //When server emits 'updateChat' this will update the users chat screen
-  socket.on('updateChat',function(user,data){
-    $('#chat').append('<b>' + user + ':</b>' + data + '<br>');
-    console.log(user + data);
-  });
-
-  /*/
-   */
-
-  //When submit is clicked (send button)
+  var socket = io();
   $('form').submit(function(){
-
-    var message = $('#msg').val();
-
-
-    //Sends message to server calling 'sendmsg' on server
-    socket.emit('sendmsg',message);
-    //Send message to server calling 'log_chat' on server
-    socket.emit('log_chat',message);
+    socket.emit('chat message',$('#msg').val());
+    $('#msg').val('');
+    return false;
   });
+
 </script>
 </body>
 </html>
