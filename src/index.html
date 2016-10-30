@@ -47,6 +47,28 @@ h1 {
      </div>
 
    </div>
+<<<<<<< HEAD
+=======
+ </body>
+<script src="/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+  var socket = io();
+  var room;
+  var alias;
+  $('form').submit(function(){
+    room = $('#room').val();
+    alias = $('#alias').val();
+
+    socket.emit('enterRoom');
+    socket.emit('createalias',alias);
+    socket.emit('joinroom',room);
+
+  });
+
+
+</script>
+>>>>>>> parent of a7aa9d0... Rooms /Alias's seem to be creating need to do more testing to be sure
 
  </body>
 </html>
