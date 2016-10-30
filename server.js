@@ -1,76 +1,97 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-
+//h
 //Send Initial page when client connects to homepage
 app.get('/',function(req,res){
     res.sendFile(__dirname + '/index.html');
 });
-
-//Send chatroom.html when client emits enterRoom
-
-
 http.listen(5000,function(){
     console.log('listening on*:5000');
 });
+app.get('/newchatroom.html',function(req,res){
+    res.sendFile(__dirname + '/newchatroom.html');
+});
 
-var users = {};
+//All active chat room names saved here
 var chatrooms = [];
 
+//All active users in the current room
 io.sockets.on('connection',function(socket){
 
-    socket.on('enterRoom',function(socket){
+    //Client emits 'enterRoom'
+    /*
+     socket.on('enterRoom',function(app){
         app.get('/chatroom.html',function(req,res){
-            res.sendFile(__dirname + '/chatroom.html');
+        res.sendFile(__dirname + '/chatroom.html');
         });
-    });
+     });
+     */
 
-    //When client sends 'createalias'
-    //Add alias to clients socket
+
+    //Client emits 'createalias'
     socket.on('createalias',function(alias){
         socket.alias = alias;
-        //users[alias] = alias;
         //Log that a new alias has been created
-        console.log('SERVER: New Alias Created - ' + socket.alias);
+        console.log('server: New Alias Created - ' + socket.alias);
 
     });
 
-    //Client sends 'joinroom'
+    //Client emits 'joinroom'
     socket.on('joinroom',function(roomname){
+        socket.room = roomname;
         socket.join(roomname);
-        chatrooms[roomname] = roomname;
+        //##########
+        //This is not working properly yet
+        //Show that the user has connected and the room they connected to
+        socket.emit('updateChat','server:','You have joined room ' + socket.room);
+        //Show all other users a new user has connected
+        socket.broadcast.to(socket.room).emit('updateChat',socket.alias,' has joined chat');
+        //##########
 
         //Log that a room has been created
-        console.log('SERVER: New Room Created - ' + roomname);
-        listrooms(chatrooms);
+        var flag = roomexists(chatrooms,roomname);
+        if(flag == true){
+            console.log('server: User:  ' + socket.alias + "joined " + socket.room);
+            listrooms(chatrooms);
+        }else{
+            console.log('server: New Room Created - ' + socket.room);
+            listrooms(chatrooms);
+        }
+        //Update Chatroom Names array
+        chatrooms[roomname] = roomname;
+
     });
 
-    /*
-    // When client sends 'sendmsg'
-    // Update the chat with username and the msg
+    //Client emits 'sendmsg'
     socket.on('sendmsg',function(data){
-        io.sockets.emit('updatechat',socket.username,data);
+        //##########
+        //This is no working properly yet
+        io.sockets.in(socket.room).emit('updateChat',socket.alias,data);
+        //##########
     });
 
-    socket.on('joinroom',function(data){
-        socket.join(data)
-    })
-    */
+    //Client emits 'log_chat'
+    socket.on('log_chat',function(msg,socket){
+        console.log(msg);
+    });
 
 
-
-});
-//Shows the chat messages.
-io.on('connection',function(socket){
-  socket.on('chat message',function(msg){
-    console.log('message: ' + msg);
-  });
 });
 
 //Helper Functions
 function listrooms(chatrooms){
-    console.log('SERVER: Current Active Rooms');
+    console.log('server: Current Active Rooms');
     for( i = 1; i < chatrooms.length; i++){
-        console.log(chatrooms[i]);
+        console.log('server: RoomID - ' + chatrooms[i]);
     }
 }
+function roomexists(chatrooms,roomname){
+    for( i = 1; i < chatrooms.length; i++){
+        if(roomname == chatrooms[i]){
+            return true;
+        }
+    }
+    return false;
+}
+
