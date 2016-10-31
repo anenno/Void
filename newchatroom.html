@@ -19,4 +19,34 @@
      <input id="m" autocomplete="off" /><button>Send</button>
    </form>
  </body>
+<script src="/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+    var socket = io.connect('http://localhost:5000');
+
+    /*
+     Listeners
+     */
+
+    //When server emits 'updateChat' this will update the users chat screen
+    socket.on('updateChat',function(user,data){
+        $('#messages').append('<b>' + user + ':</b>' + data + '<br>');
+        console.log(user + data);
+    });
+
+    /*/
+     */
+
+    //When submit is clicked (send button)
+    $('form').submit(function(){
+
+        var message = $('#m').val();
+
+
+        //Sends message to server calling 'sendmsg' on server
+        socket.emit('sendmsg',message);
+        //Send message to server calling 'log_chat' on server
+        socket.emit('log_chat',message);
+    });
+</script>
 </html>
