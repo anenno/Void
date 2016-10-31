@@ -1,0 +1,23 @@
+date: October 30, 2016
+meeting_type: group
+attendance: [mitchelt,orkhiyae]
+absent: []
+excused_absences: [justynth,ajnenno2] 
+task_progress: 
+  [
+  {ubit: mitchelt, progress: Worked on Socket.IO - fixed merge issues},
+  {ubit: justynth, progress: },
+  {ubit: orkhiyae, progress: fixed merge issues, worked on video},
+  {ubit: ajnenno2, progress: }
+  ]
+issues: 
+  [
+  {ubit: mitchelt, issue: },
+  {ubit: justynth, issue: },
+  {ubit: orkhiyae, issue: },
+  {ubit: ajnenno2, issue: }
+  ]
+Notes:
+  {Fixed conflicts for merge, merged develop onto master. Created video.
+   Still unable to update chat log - Unable to update this even locally.
+  }
