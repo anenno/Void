@@ -9,8 +9,8 @@ app.get('/',function(req,res){
 http.listen(5000,function(){
     console.log('listening on*:5000');
 });
-app.get('/newchatroom.html',function(req,res){
-    res.sendFile(__dirname + '/newchatroom.html');
+app.get('/chatroom.html',function(req,res){
+    res.sendFile(__dirname + '/chatroom.html');
 });
 
 //All active chat room names saved here
@@ -18,16 +18,6 @@ var chatrooms = [];
 
 //All active users in the current room
 io.sockets.on('connection',function(socket){
-
-    //Client emits 'enterRoom'
-    /*
-     socket.on('enterRoom',function(app){
-        app.get('/chatroom.html',function(req,res){
-        res.sendFile(__dirname + '/chatroom.html');
-        });
-     });
-     */
-
 
     //Client emits 'createalias'
     socket.on('createalias',function(alias){
@@ -39,41 +29,37 @@ io.sockets.on('connection',function(socket){
 
     //Client emits 'joinroom'
     socket.on('joinroom',function(roomname){
+
+        //save roomname in socket
         socket.room = roomname;
+        //join room - Assign socket to roomname
         socket.join(roomname);
-        //##########
-        //This is not working properly yet
-        //Show that the user has connected and the room they connected to
+        //emit updateChat only for this socket - No other users in room should see this. It should
+        //only update this sockets chatroom.html
         socket.emit('updateChat','server:','You have joined room ' + socket.room);
         //Show all other users a new user has connected
         socket.broadcast.to(socket.room).emit('updateChat',socket.alias,' has joined chat');
-        //##########
-
-        //Log that a room has been created
+        //Log that a room has been created or that a user has a joined a specific room.
         var flag = roomexists(chatrooms,roomname);
         if(flag == true){
             console.log('server: User:  ' + socket.alias + "joined " + socket.room);
             listrooms(chatrooms);
         }else{
             console.log('server: New Room Created - ' + socket.room);
+            chatrooms[roomname] = roomname;
             listrooms(chatrooms);
         }
-        //Update Chatroom Names array
-        chatrooms[roomname] = roomname;
-
     });
 
     //Client emits 'sendmsg'
+    //This will emit 'updateChat' to client to update chatroom.html
     socket.on('sendmsg',function(data){
-        //##########
-        //This is no working properly yet
         io.sockets.in(socket.room).emit('updateChat',socket.alias,data);
-        //##########
-    });
+        //Logs message on console
+        //Alias and Room ID are undefined , I'm not sure why but they are most likely undefined above
+        //Maybe they need to be passed from client
+        console.log("Room ID: " + socket.room + "Alias: " + socket.alias + " " + data);
 
-    //Client emits 'log_chat'
-    socket.on('log_chat',function(msg,socket){
-        console.log(msg);
     });
 
 

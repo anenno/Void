@@ -1,0 +1,13 @@
+.chat-log{
+    float:left;
+    height: 90vh;
+    width: 98vw;
+    border-color: #f2f2f2;
+    border-width: thin;
+    border-style: solid;
+    margin-top: 1vh;
+    margin-left: 1vw;
+    margin-right: 1vw;
+    background-color: #1a1a1a;
+    color: #f2f2f2;
+}
