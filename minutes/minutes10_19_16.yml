@@ -1,0 +1,21 @@
+date: October 19, 2016
+meeting_type: ta
+attendance: [mitchelt, ajnenno2,orkhiyae,justynth]
+absent: []
+excused_absences: [] 
+task_progress: 
+  [
+  {ubit: mitchelt, progress: Researching socket.io and using namespaces},
+  {ubit: justynth, progress: },
+  {ubit: orkhiyae, progress: researching html button sizes},
+  {ubit: ajnenno2, progress: Access to server nearly complete}
+  ]
+issues: 
+  [
+  {ubit: mitchelt, issue: No real issues yet},
+  {ubit: justynth, issue: No real issues yet},
+  {ubit: orkhiyae, issue: No real issues yet},
+  {ubit: ajnenno2, issue: No real issues yet}
+  ]
+Notes:
+  { }
