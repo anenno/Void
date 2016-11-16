@@ -1,94 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
-<title>Void</title>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<!-- <link rel="alternate stylesheet" href="font-awesome.min.css" -->
+  <title> VOID </title>
+  <style>
+    * {color: white; background: #1a1a1a; margin: 0; padding: 0; box-sizing: border-box ; }
+    body {font: 13px Lucida Console, monospace;}
+    form {background: #1a1a1a ; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+    <!--
 
-<style>
-body {
-  background-color: #1a1a1a;
-  font-family: ‘Lucida Console’, Monaco, monospace;
-}
-.chat-log {
-  height: 90vh;
-  width: 98vw;
-  border-color: #f2f2f2;
-  border-width: thin;
-  border-style: solid;
-  margin-top: 1vh;
-  margin-left: 1vw;
-  margin-right: 1vw;
-}
-
-</style>
+    -->
+    #messages { list-style-type: none; margin: 0; padding: 0; }
+    #messages li { padding: 5px 10px; }
+    #messages li:nth-child(odd) { background: #eee; }
+  </style>
 </head>
 <body>
-<!--
-<div id = "chat" class="chat-log">
-  <form name="chat-log" action="localhost:5000" method="get" value="Chat">
-<div class="chat-log">
-  <form name="chat-log" action="localhost:5000" method="get">
-    <script type="text/javascript">
-      var div = document.getElementById("chat-log");
-      div.textContent = $('#msg').val('');
-      var text = div.textContent;
-      div.textContent = "This is a test";
-    </script>
-  <form name="chat-log" action="server.js" method="get">
-  </form>
-</div>
--->
-<div id="chat" class="chat-log">
-</div>
-
-<div class="message">
-  <!--Removed POST from method. Was having issues with the chatroom not reloading
-  method="post"
-  -->
-  <form name="message" method=post">
-
-    <input type="file" id="fileID" style="visibility: hidden;" />
-    <button type="button" href="#" onclick="document.getElementById('fileID').click(); return false;" style="display: inline-block; float: left; background-color: #1a1a1a; color: #f2f2f2; width: 7vw; margin-left: 1vw; height: 3vh;" />Upload</button>
+<ul id="messages"></ul>
+<h1>Room Name Here</h1>
+<form id="form" action="" onsubmit="return sendFunction();">
     <input id="msg" autocomplete="off" type="text" style="height: 3vh; color: #f2f2f2; width: 87vw; background-color: #1a1a1a; display: inline-block; float: left; padding-left: 1vw; padding-right: 1vw;" name="message-input" value="">
     <input type="submit" autocomplete="off" style="width: 4vw; color: #f2f2f2; background-color: #1a1a1a; display: inline-block; float: left; text-align: center; height: 3vh" name="SendButton" value="Send">
-
-  </form>
-</div>
-
-<script src="/socket.io/socket.io.js"></script>
-<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-<script>
-  //var socket = io.connect('http://localhost:5000');
-  var socket = io();
-
-  /*
-   Listeners
-   */
-
-  //When server emits 'updateChat' this will update the users chat screen
-  //It should - it is not working. I am not able to get the chat to just update locally either.
-  socket.on('updateChat',function(user,data){
-    var message = $('#msg').val();
-    var chat_div = document.getElementByID('chat');
-    var content = document.createTextNode(message);
-    chat_div.appendChild(content);
-   // socket.emit('log_chat',user + message);
-  });
-
-  //When submit is clicked (send button)
-  $('form').submit(function(){
-    //Sends message to server calling 'sendmsg' on server
-    var message = $('#msg').val();
-    socket.emit('sendmsg',message);
-    //Send message to server calling 'log_chat' on server
-    socket.emit('log_chat',message,socket);
-
-    //document.getElementByID(chat).innerHTML = message;
-  });
-
-</script>
+</form>
 </body>
 </html>
+
+<!--
+#1a1a1a
+-->

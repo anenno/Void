@@ -1,24 +1,66 @@
+/*##################################################
+                 NEW SERVER CODE                   #
+ ##################################################*/
+var PORT = 5000;
+
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-//h
-//Send Initial page when client connects to homepage
+//var path  = require('path');
+
 app.get('/',function(req,res){
     res.sendFile(__dirname + '/index.html');
-});
-http.listen(5000,function(){
-    console.log('listening on*:5000');
 });
 app.get('/chatroom.html',function(req,res){
     res.sendFile(__dirname + '/chatroom.html');
 });
+
+io.on('connection',function(socket){
+    socket.on('updateChat',function(from,msg){
+        io.emit('updateChat',from,msg);
+    });
+    socket.on('joinRoom',function(user){
+        io.emit('joinRoom',user);
+    });
+});
+//Listener
+http.listen(PORT,function(){
+    console.log('listening on*:'+PORT);
+});
+//###################################################
+
+
+
+/*#################################################
+                OLD SERVER CODE                   #
+##################################################
+var app = require('express')();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+var PORT = 5000;
+
+//Send Initial page when client connects to homepage
+app.get('/',function(req,res){
+    res.sendFile(__dirname + '/index.html');
+});
+http.listen(PORT,function(){
+    console.log('listening on*:'+PORT);
+});
+app.get('/chatroom.html',function(req,res){
+    res.sendFile(__dirname + '/chatroom.html');
+});
+//###################################################
+
+
+
+
+
 
 //All active chat room names saved here
 var chatrooms = [];
 
 //All active users in the current room
 io.sockets.on('connection',function(socket){
-
     //Client emits 'createalias'
     socket.on('createalias',function(alias){
         socket.alias = alias;
@@ -29,11 +71,11 @@ io.sockets.on('connection',function(socket){
 
     //Client emits 'joinroom'
     socket.on('joinroom',function(roomname){
-
         //save roomname in socket
         socket.room = roomname;
         //join room - Assign socket to roomname
         socket.join(roomname);
+        socket.emit('updateRoomName',roomname);
         //emit updateChat only for this socket - No other users in room should see this. It should
         //only update this sockets chatroom.html
         socket.emit('updateChat','server:','You have joined room ' + socket.room);
@@ -62,7 +104,6 @@ io.sockets.on('connection',function(socket){
 
     });
 
-
 });
 
 //Helper Functions
@@ -80,4 +121,5 @@ function roomexists(chatrooms,roomname){
     }
     return false;
 }
+ */
 
