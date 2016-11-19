@@ -1,0 +1,21 @@
+date: November 18, 2016
+meeting_type: group
+attendance: [mitchelt, ajnenno2]
+absent: [justynth]
+excused_absences: [orkhiyae]
+task_progress: 
+  [
+  {ubit: mitchelt, progress: figured out updating html div},
+  {ubit: justynth, progress: },
+  {ubit: orkhiyae, progress: },
+  {ubit: ajnenno2, progress: continued research on HTTPS}
+  ]
+issues: 
+  [
+  {ubit: mitchelt, issue: },
+  {ubit: justynth, issue: },
+  {ubit: orkhiyae, issue: },
+  {ubit: ajnenno2, issue: }
+  ]
+Notes:
+  {}
