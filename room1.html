@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title> VOID </title>
+    <title> VOID_Room1 </title>
     <style>
         * {color: white; background: #1a1a1a; margin: 0; padding: 0; box-sizing: border-box ; }
         body {font: 13px Lucida Console, monospace;}
@@ -10,7 +10,7 @@
 </head>
 <body>
 <div id = "chatlog"></div>
-<h1 id="h1"></h1>
+<h1 id="h1">Room1</h1>
 <form id="form" action="" >
     <input id="msg" autocomplete="off" type="text"
            style="height: 3vh;
@@ -37,10 +37,9 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
-    var dir = "http://localhost:5000";
-    var socket = io(dir);
+    var socket = io("http://localhost:5000/room1");
     /*
-            LISTENER
+     LISTENER
      */
     socket.on('updateChat',function(data,user){
         console.log("updateChat called: message = "+ data);
@@ -54,23 +53,22 @@
         document.getElementById("h1").innerHTML = room;
 
     });
+
     /*
-        Submit Function
+     Submit Function
      */
     function submitMessage(){
         /* Local Update of HTML Div - Used this for testing
-            var newline = "<br>";
-            var message = $('#msg').val();
-            document.body.innerHTML = document.body.innerHTML + message + newline;
+         var newline = "<br>";
+         var message = $('#msg').val();
+         document.body.innerHTML = document.body.innerHTML + message + newline;
          */
         var message = $('#msg').val();
         socket.emit("sendmsg",message);
         console.log("Called 'sendmsg'");
 
     }
-    function updateNamespace(namespace){
-        socket = io("http://localhost:5000/" + namespace);
-    }
+
 </script>
 </body>
 </html>

@@ -39,35 +39,56 @@ h1 {
    <div class="background">
      <h1>Void</h1>
      <div class="input-section">
-       <form action="chatroom.html">
-         <!--<input id="room" type="text" autocomplete="off" style="background-color: #1a1a1a; text-align: center;" name="RoomID" placeholder="Room ID"><br><br>
+         <!--
+         action="chatroom.html"
+         -->
+       <form>
+         <!--
+           <input id="room" type="text" autocomplete="off" style="background-color: #1a1a1a; text-align: center;" name="RoomID" placeholder="Room ID"><br><br>
          -->
          <input id="alias" type="text" autocomplete="off" style="background-color: #1a1a1a; text-align: center;" name="alias" placeholder="Alias"><br><br>
-         <input type="submit" autocomplete="off" style="background-color: #1a1a1a; stroke-width: 0;" value="Enter Room">
+         <input formaction ="room1.html" onclick="joinRoom1()" type="submit" autocomplete="off" style="background-color: #1a1a1a; stroke-width: 0;" value="Room1">
+         <input formaction ="room2.html" onclick="joinRoom2()" type="submit" autocomplete="off" style="background-color: #1a1a1a; stroke-width: 0;" value="Room2">
+         <input formaction ="room3.html" onclick="joinRoom3()" type="submit" autocomplete="off" style="background-color: #1a1a1a; stroke-width: 0;" value="Room3">
+         <!--<input type="submit" autocomplete="off" style="background-color: #1a1a1a; stroke-width: 0;" value="Enter Room">
+            -->
        </form>
      </div>
-
    </div>
  </body>
 <script src="/socket.io/socket.io.js"></script>
 <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
   var socket = io();
-  var room;
   var alias;
+  alias = $('#alias').val();
+
+  function joinRoom1(){
+      socket.emit('joinRoom',alias,"room1");
+  }
+  function joinRoom2(){
+      socket.emit('joinRoom',alias,"room2");
+  }
+  function joinRoom3(){
+      socket.emit('joinRoom',alias,"room3");
+  }
   $('form').submit(function(){
+      //alias = $('#alias').val();
+
+      /*
     room = $('#room').val();
     alias = $('#alias').val();
       /*
        Should add checks here if the room and alias entered are blank
-     */
-      //socket.emit('joinRoom',alias);
+
+      socket.emit('joinRoom',room);
       //console.log("Called 'joinRoom'");
       //socket.emit('createalias',alias);
       //socket.emit('joinRoom',room);
       //socket.emit('enterRoom');
 
-      socket.emit('joinRoom');
+      //socket.emit('joinRoom');
+       */
   });
 </script>
  </body>
