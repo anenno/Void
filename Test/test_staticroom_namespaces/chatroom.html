@@ -39,19 +39,19 @@
 <script>
     var dir = "http://localhost:5000";
     var socket = io(dir);
-
     /*
             LISTENER
      */
-    socket.on('updateChat',function(user,data){
+    socket.on('updateChat',function(data,user){
         console.log("updateChat called: message = "+ data);
         var newline = "<br>";
         var message = data;
+        console.log("Attempting to update Chatlog");
         document.body.innerHTML = document.body.innerHTML + user + ": " + message + newline;
     });
     socket.on('updateRoomName',function(roomname){
-        console.log("updateRoomName called: roomname = " + roomname);
-        document.getElementById("h1").innerHTML = roomname;
+        var room = roomname;
+        document.getElementById("h1").innerHTML = room;
 
     });
     /*
@@ -63,11 +63,13 @@
             var message = $('#msg').val();
             document.body.innerHTML = document.body.innerHTML + message + newline;
          */
-
         var message = $('#msg').val();
         socket.emit("sendmsg",message);
         console.log("Called 'sendmsg'");
 
+    }
+    function updateNamespace(namespace){
+        socket = io("http://localhost:5000/" + namespace);
     }
 </script>
 </body>
