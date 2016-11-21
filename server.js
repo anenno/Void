@@ -58,7 +58,7 @@ io.sockets.on('connection',function(socket){
     //Client emits 'sendmsg'
     socket.on('sendmsg',function(data){
         //io.sockets.in(socket.room).emit('updateChat',socket.alias,data);
-        io.socket
+        io.sockets.in(socket.room).emit()
         socket.emit('updateChat',socket.alias,data);
         console.log("Message Received: " + data);
         });
