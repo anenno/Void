@@ -38,7 +38,7 @@
             box-sizing: border-box;
             display:none;
         }
-        #form {
+        #chatform {
             color:white;
             background: #1a1a1a ;
             padding: 3px;
@@ -54,15 +54,15 @@
     <div class="input-section">
         <form id="aliasForm">
             <input id="alias" type="text" autocomplete="off" style="background-color: #1a1a1a; text-align: center;" name="alias" placeholder="Alias"><br><br>
-            <input type="button" autocomplete="off"  value="Enter Room" onclick="enterRoom()"
+            <input id="enterbutton" type="button" autocomplete="off"  value="Enter Room" onclick="enterRoom()"
                    style="background-color: #1a1a1a; stroke-width: 0;"
             >
         </form>
     </div>
 </div>
 <div id = "chatlog">
-    <h1 id="h1">"Room Name Here"</h1>
-    <form id="form" action="" >
+    <h1 id="h1">Channel: </h1>
+    <form id="chatform">
         <input id="msg" autocomplete="off" type="text" name="message-input" value="" style="height: 3vh;
            color: #f2f2f2;
            width: 87vw;
@@ -87,32 +87,28 @@
 <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
     var socket = io.connect();
+    var newline = "<br>";
     $( document ).ready(function() {
-        console.log( "ready!" );
-
-
-
+        document.getElementById('chatlog').style.display='none';
+        document.getElementById('aliasWindow').style.display='block';
         /*
          LISTENER
          */
         socket.on('updateChat',function(user,data){
             console.log("updateChat called: message = "+ data);
-            var newline = "<br>";
             var message = data;
             document.body.innerHTML = document.body.innerHTML + user + ": " + message + newline;
         });
-        socket.on('updateRoomName',function(roomname){
-            console.log("updateRoomName called: roomname = " + roomname);
-            document.getElementById("h1").innerHTML = roomname;
-
+        socket.on('serverMessage',function(data){
+            var message = data;
+            document.body.innerHTML = document.body.innerHTML + "server: " + message + newline;
         });
-
-
+        socket.on('updateRoomName',function(roomname){
+            document.getElementById("h1").innerHTML = roomname;
+        });
     });
 
     function enterRoom(){
-
-
         document.getElementById('chatlog').style.display='block';
         document.getElementById('aliasWindow').style.display='none';
         var alias = $('#alias').val();
@@ -120,17 +116,10 @@
     }
 
     function submitMessage(){
-        /* Local Update of HTML Div - Used this for testing
-         var newline = "<br>";
-         var message = $('#msg').val();
-         document.body.innerHTML = document.body.innerHTML + message + newline;
-         */
-
         var message = $('#msg').val();
         socket.emit("sendmsg",message);
-        console.log("Called 'sendmsg'");
-
     }
+
 </script>
 </body>
 </html>
