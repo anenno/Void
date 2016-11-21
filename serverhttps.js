@@ -1,12 +1,21 @@
 /**
- * Created by Mitch on 11/20/2016.
+ * Created by Mitch on 11/21/2016.
  */
 
 var PORT = 5000;
 
+var fs = require('fs');
 var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+
+
+var options = {
+    key: fs.readFileSync('./file.pem'),
+    cert: fs.readFileSync('./file.crt')
+};
+
+var https = require('https').Server(options,app);
+var io = require('socket.io')(https);
+
 
 app.get('/',function(req,res){
     res.sendFile(__dirname + '/index.html');
@@ -41,7 +50,7 @@ io.sockets.on('connection',function(socket){
         }else{
             io.sockets.emit('serverMessage',socket.alias + " has left the channel");
         }
-0
+        0
     });
 
 });
