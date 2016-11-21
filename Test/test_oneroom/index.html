@@ -38,9 +38,10 @@
     <h1>Void</h1>
     <div class="input-section">
         <form action="chatroom.html">
-            <input id="room" type="text" autocomplete="off" style="background-color: #1a1a1a; text-align: center;" name="RoomID" placeholder="Room ID"><br><br>
+            <!--<input id="room" type="text" autocomplete="off" style="background-color: #1a1a1a; text-align: center;" name="RoomID" placeholder="Room ID"><br><br>
+            -->
             <input id="alias" type="text" autocomplete="off" style="background-color: #1a1a1a; text-align: center;" name="alias" placeholder="Alias"><br><br>
-            <input type="submit" autocomplete="off" style="background-color: #1a1a1a; stroke-width: 0;" value="Enter Room">
+            <input type="submit" autocomplete="off" style="background-color: #1a1a1a; stroke-width: 0;" value="Enter Chat">
         </form>
     </div>
 
@@ -50,15 +51,13 @@
 <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
     var socket = io.connect('http://localhost:5000');
-    var room;
-    var alias;
+    jQuery(function($){
+        var $alias = $('#alias');
+    });
+
+
     $('form').submit(function(){
-        room = $('#room').val();
-        alias = $('#alias').val();
-        /*
-         Should add checks here if the room and alias entered are blank
-         */
-        socket.emit('joinroom',room,alias);
+        socket.emit('newuser',alias);
     });
 </script>
 
