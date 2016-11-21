@@ -5,16 +5,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-
     <style>
         body {
             background-color: #1a1a1a;
             font-family: ‘Lucida Console’, Monaco, monospace;
+            color:white;
         }
-        .background {
+        #aliasWindow{
             background-color: #1a1a1a;
         }
-        form {
+
+        #aliasForm {
             padding-top: 35vh;
             /*height: 50%;*/
             color: #ffffff;
@@ -22,35 +23,47 @@
             text-align: center;
             vertical-align: middle;
         }
+
         h1 {
             padding-top: 5vh;
             padding-left: 5vw;
             font-family: ‘Lucida Console’, Monaco, monospace;
+
         }
-        /*p {
-        }*/
+        #chatlog {
+            color: white;
+            background: #1a1a1a;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            display:none;
+        }
+        #form {
+            color:white;
+            background: #1a1a1a ;
+            padding: 3px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
     </style>
 </head>
-
 <body>
-
-<div class="background">
+<div id = "aliasWindow" class="background">
     <h1>Void</h1>
     <div class="input-section">
-        <form action="chatroom.html">
-            <!--<input id="room" type="text" autocomplete="off" style="background-color: #1a1a1a; text-align: center;" name="RoomID" placeholder="Room ID"><br><br>
-            -->
+        <form id="aliasForm">
             <input id="alias" type="text" autocomplete="off" style="background-color: #1a1a1a; text-align: center;" name="alias" placeholder="Alias"><br><br>
-            <input type="submit" autocomplete="off" style="background-color: #1a1a1a; stroke-width: 0;" value="Enter Room">
+            <input type="button" autocomplete="off"  value="Enter Room" onclick="enterRoom()"
+                   style="background-color: #1a1a1a; stroke-width: 0;"
+            >
         </form>
     </div>
-
 </div>
-<div id = "chatlog"></div>
-<h1 id="h1"></h1>
-<form id="form" action="" >
-    <input id="msg" autocomplete="off" type="text"
-           style="height: 3vh;
+<div id = "chatlog">
+    <h1 id="h1">"Room Name Here"</h1>
+    <form id="form" action="" >
+        <input id="msg" autocomplete="off" type="text" name="message-input" value="" style="height: 3vh;
            color: #f2f2f2;
            width: 87vw;
            background-color: #1a1a1a;
@@ -58,35 +71,66 @@
            float: left;
            padding-left: 1vw;
            padding-right: 1vw;"
-           name="message-input"
-           value=""
-    >
-    <input id="sendButton" type="button" autocomplete="off" onclick="submitMessage()" name="SendButton" value = "Send"
-           style = "width: 4vw;
+        >
+        <input id="sendButton" type="button" autocomplete="off" onclick="submitMessage()" name="SendButton" value = "Send" style = "width: 4vw;
            color: #f2f2f2;
            background-color: #1a1a1a;
            display: inline-block;
            float: left;
            text-align: center;
            height: 3vh;"
-    >
-</form>
+        >
+    </form>
+</div>
 </body>
 <script src="/socket.io/socket.io.js"></script>
 <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
     var socket = io.connect();
-    var alias;
-    $('form').submit(function(){
-        //room = $('#room').val();
-        alias = $('#alias').val();
+    $( document ).ready(function() {
+        console.log( "ready!" );
+
+
+
         /*
-         Should add checks here if the room and alias entered are blank
+         LISTENER
+         */
+        socket.on('updateChat',function(user,data){
+            console.log("updateChat called: message = "+ data);
+            var newline = "<br>";
+            var message = data;
+            document.body.innerHTML = document.body.innerHTML + user + ": " + message + newline;
+        });
+        socket.on('updateRoomName',function(roomname){
+            console.log("updateRoomName called: roomname = " + roomname);
+            document.getElementById("h1").innerHTML = roomname;
+
+        });
+
+
+    });
+
+    function enterRoom(){
+
+
+        document.getElementById('chatlog').style.display='block';
+        document.getElementById('aliasWindow').style.display='none';
+        var alias = $('#alias').val();
+        socket.emit('joinroom',alias);
+    }
+
+    function submitMessage(){
+        /* Local Update of HTML Div - Used this for testing
+         var newline = "<br>";
+         var message = $('#msg').val();
+         document.body.innerHTML = document.body.innerHTML + message + newline;
          */
 
-        socket.emit('joinroom',alias);
-    });
-</script>
+        var message = $('#msg').val();
+        socket.emit("sendmsg",message);
+        console.log("Called 'sendmsg'");
 
+    }
+</script>
 </body>
 </html>

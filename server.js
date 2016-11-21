@@ -9,7 +9,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 app.get('/',function(req,res){
-    res.sendFile(__dirname + '/newindex.html');
+    res.sendFile(__dirname + '/index.html');
 });
 
 app.get('/chatroom.html',function(req,res){
