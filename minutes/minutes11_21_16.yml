@@ -6,8 +6,8 @@ excused_absences: [ajnenno2]
 task_progress: 
   [
   {ubit: mitchelt, progress: Worked on video/submission},
-  {ubit: orkhiyae, progress: },
-  {ubit: ajnenno2, progress: Worked on video/submission}
+  {ubit: orkhiyae, progress: Worked on video/submission},
+  {ubit: ajnenno2, progress: }
   ]
 issues: 
   [
