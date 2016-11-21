@@ -1,0 +1,22 @@
+date: October 27, 2016
+meeting_type: ta
+attendance: [mitchelt, ajnenno2]
+absent: []
+excused_absences: [orkhiyae,justynth] 
+task_progress: 
+  [
+  {ubit: mitchelt, progress: },
+  {ubit: justynth, progress: },
+  {ubit: orkhiyae, progress: },
+  {ubit: ajnenno2, progress: }
+  ]
+issues: 
+  [
+  {ubit: mitchelt, issue: },
+  {ubit: justynth, issue: },
+  {ubit: orkhiyae, issue: },
+  {ubit: ajnenno2, issue: }
+  ]
+Notes:
+  { tried to get the html form to update, no progress made}
+
