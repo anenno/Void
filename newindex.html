@@ -5,7 +5,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-
     <style>
         body {
             background-color: #1a1a1a;
@@ -27,29 +26,23 @@
             padding-left: 5vw;
             font-family: ‘Lucida Console’, Monaco, monospace;
         }
-        /*p {
-        }*/
     </style>
 </head>
-
 <body>
-
 <div class="background">
     <h1>Void</h1>
     <div class="input-section">
         <form action="chatroom.html">
-            <!--<input id="room" type="text" autocomplete="off" style="background-color: #1a1a1a; text-align: center;" name="RoomID" placeholder="Room ID"><br><br>
-            -->
             <input id="alias" type="text" autocomplete="off" style="background-color: #1a1a1a; text-align: center;" name="alias" placeholder="Alias"><br><br>
             <input type="submit" autocomplete="off" style="background-color: #1a1a1a; stroke-width: 0;" value="Enter Room">
         </form>
     </div>
-
 </div>
+
 <div id = "chatlog"></div>
 <h1 id="h1"></h1>
 <form id="form" action="" >
-    <input id="msg" autocomplete="off" type="text"
+    <input id="msg" autocomplete="off" type="text" name="message-input" value=""
            style="height: 3vh;
            color: #f2f2f2;
            width: 87vw;
@@ -58,8 +51,7 @@
            float: left;
            padding-left: 1vw;
            padding-right: 1vw;"
-           name="message-input"
-           value=""
+
     >
     <input id="sendButton" type="button" autocomplete="off" onclick="submitMessage()" name="SendButton" value = "Send"
            style = "width: 4vw;
@@ -71,10 +63,17 @@
            height: 3vh;"
     >
 </form>
+
 </body>
 <script src="/socket.io/socket.io.js"></script>
 <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
+
+    $( document ).ready(function() {
+        console.log( "ready!" );
+        var $chatDiv = $('#chatlog');
+        $chatDiv.hide();
+    });
     var socket = io.connect();
     var alias;
     $('form').submit(function(){
@@ -87,6 +86,5 @@
         socket.emit('joinroom',alias);
     });
 </script>
-
 </body>
 </html>

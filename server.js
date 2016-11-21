@@ -9,7 +9,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 app.get('/',function(req,res){
-    res.sendFile(__dirname + '/index.html');
+    res.sendFile(__dirname + '/newindex.html');
 });
 
 app.get('/chatroom.html',function(req,res){
@@ -21,22 +21,26 @@ http.listen(PORT,function(){
     console.log('listening on*:'+PORT);
 });
 //All active users in the room
-var users = {};
+//var connectedUsers = [];
+
+var clientSockets = [];
 
 io.sockets.on('connection',function(socket){
     //Client emits 'joinroom'
     socket.on('joinroom',function(alias){
         socket.alias = alias;
-        console.log('server: New Alias Created - ' + socket.alias);
-        socket.emit('updateChat','server:','You have joined the chat');
-        io.sockets.broadcast('updateChat','server:',socket.alias + ' has joined the chat');
-        users.push(alias);
+        console.log(socket.alias + " joined the room (socket.id = " + socket.id);
+        socket.emit("server: You have joined the channel as " + socket.alias);
+        updateClientSockets(socket);
+        //connectedUsers.push(alias);
     });
 
     //Client emits 'sendmsg'
     socket.on('sendmsg',function(data){
+        //var client = io.sockets.connected(socket.id);
+        console.log("msg rcvd from socket id: " + socket.id);
         io.sockets.emit('updateChat',socket.alias,data);
-        console.log("Message Received: " + data);
+        console.log("msg: " + data);
     });
 
     socket.on('newuser',function(data,callback){
@@ -54,11 +58,6 @@ io.sockets.on('connection',function(socket){
             io.sockets.emit('updateUserList',users);
         }
         */
-    });
-    socket.on('disconnect',function(data){
-       if(!socket.alias) return;
-        users.splice(users.indexOf(socket.alias),1);
-        io.sockets.emit('usernames',users);
     });
 
 });
@@ -85,6 +84,10 @@ function nameExists(users){
     }
     return false;
 }
+function updateClientSockets(socket){
+
+}
+
 
 
 
