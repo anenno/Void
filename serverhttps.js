@@ -1,32 +1,30 @@
 /**
+ * Created by mitch on 11/21/16.
+ */
+/**
  * Created by Mitch on 11/21/2016.
  */
 
-var PORT = 5000;
-
+var PORT_HTTPS = 5001;
 var fs = require('fs');
+var https = require('https');
 var app = require('express')();
-
 
 var options = {
     key: fs.readFileSync('./file.pem'),
     cert: fs.readFileSync('./file.crt')
 };
 
-var https = require('https').Server(options,app);
 var io = require('socket.io')(https);
-
 
 app.get('/',function(req,res){
     res.sendFile(__dirname + '/index.html');
 });
 
+https.createServer(options,app).listen(PORT_HTTPS);
+console.log('listening on*:'+ PORT_HTTPS);
 
 
-//Listener
-http.listen(PORT,function(){
-    console.log('listening on*:'+PORT);
-});
 //All active users in the room
 
 io.sockets.on('connection',function(socket){
@@ -50,7 +48,6 @@ io.sockets.on('connection',function(socket){
         }else{
             io.sockets.emit('serverMessage',socket.alias + " has left the channel");
         }
-        0
     });
 
 });
@@ -80,8 +77,3 @@ function nameExists(users){
 function updateClientSockets(socket){
 
 }
-
-
-
-
-
