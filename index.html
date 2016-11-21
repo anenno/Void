@@ -53,6 +53,7 @@
     <h1>Void</h1>
     <div class="input-section">
         <form id="aliasForm">
+            <input id="room" type="text" autocomplete="off" style="background-color: #1a1a1a; text-align: center;" name="room" placeholder="Room"><br><br>
             <input id="alias" type="text" autocomplete="off" style="background-color: #1a1a1a; text-align: center;" name="alias" placeholder="Alias"><br><br>
             <input id="enterbutton" type="button" autocomplete="off"  value="Enter Room" onclick="enterRoom()"
                    style="background-color: #1a1a1a; stroke-width: 0;"
@@ -61,7 +62,7 @@
     </div>
 </div>
 <div id = "chatlog">
-    <h1 id="h1">Channel: </h1>
+    <h1 id="Chat_Header"></h1>
     <form id="chatform">
         <input id="msg" autocomplete="off" type="text" name="message-input" value="" style="height: 3vh;
            color: #f2f2f2;
@@ -104,15 +105,15 @@
             document.body.innerHTML = document.body.innerHTML + "server: " + message + newline;
         });
         socket.on('updateRoomName',function(roomname){
-            document.getElementById("h1").innerHTML = roomname;
+            document.getElementById('Chat_Header').innerHTML = "Channel: " + roomname;
         });
-
     });
     function enterRoom(){
         document.getElementById('chatlog').style.display='block';
         document.getElementById('aliasWindow').style.display='none';
         var alias = $('#alias').val();
-        socket.emit('joinroom',alias);
+        var room = $('#room').val();
+        socket.emit('joinroom',alias,room);
     }
 
     function submitMessage(){

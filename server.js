@@ -22,13 +22,16 @@ http.listen(PORT,function(){
 
 io.sockets.on('connection',function(socket){
 
-    socket.on('joinroom',function(alias){
+    socket.on('joinroom',function(alias,room){
         socket.alias = alias;
-        io.sockets.emit('serverMessage',socket.alias + " has joined the channel");
+        socket.room = room;
+        socket.join(room);
+        io.sockets.in(socket.room).emit('serverMessage',socket.alias + " has joined the channel");
+        socket.emit('updateRoomName',socket.room);
     });
 
     socket.on('sendmsg',function(data){
-        io.sockets.emit('updateChat',socket.alias,data);
+        io.sockets.in(socket.room).emit('updateChat',socket.alias,data);
     });
 
     socket.on('newuser',function(data,callback){
@@ -39,7 +42,8 @@ io.sockets.on('connection',function(socket){
         if(socket.alias == null){
             //Do nothing;
         }else{
-            io.sockets.emit('serverMessage',socket.alias + " has left the channel");
+            io.sockets.in(socket.room).emit('serverMessage',socket.alias + " has left the channel");
+            socket.leave(socket.room);
         }
 0
     });
