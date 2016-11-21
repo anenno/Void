@@ -1,74 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Void</title>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <title>Void</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #1a1a1a;
+            font-family: ‘Lucida Console’, Monaco, monospace;
+            color:white;
+        }
+        #aliasWindow{
+            background-color: #1a1a1a;
+        }
 
-<style>
-body {
-  background-color: #1a1a1a;
-  font-family: ‘Lucida Console’, Monaco, monospace;
-}
-.background {
-  background-color: #1a1a1a;
-}
-form {
-  padding-top: 35vh;
-  /*height: 50%;*/
-  color: #ffffff;
-  background-color: #1a1a1a;
-  text-align: center;
-  vertical-align: middle;
+        #aliasForm {
+            padding-top: 35vh;
+            /*height: 50%;*/
+            color: #ffffff;
+            background-color: #1a1a1a;
+            text-align: center;
+            vertical-align: middle;
+        }
 
-}
-h1 {
-  padding-top: 5vh;
-  padding-left: 5vw;
-  font-family: ‘Lucida Console’, Monaco, monospace;
-}
-/*p {
+        h1 {
+            padding-top: 5vh;
+            padding-left: 5vw;
+            font-family: ‘Lucida Console’, Monaco, monospace;
 
-}*/
-</style>
+        }
+        #chatlog {
+            color: white;
+            background: #1a1a1a;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            display:none;
+        }
+        #chatform {
+            color:white;
+            background: #1a1a1a ;
+            padding: 3px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
 </head>
-
- <body>
-
-   <div class="background">
-     <h1>Void</h1>
-     <div class="input-section">
-       <form action="chatroom.html">
-         <input id="room" type="text" autocomplete="off" style="background-color: #1a1a1a; text-align: center;" name="RoomID" placeholder="Room ID"><br><br>
-         <input id="alias" type="text" autocomplete="off" style="background-color: #1a1a1a; text-align: center;" name="alias" placeholder="Alias"><br><br>
-         <input type="submit" autocomplete="off" style="background-color: #1a1a1a; stroke-width: 0;" value="Enter Room">
-       </form>
-     </div>
-
-   </div>
- </body>
+<body>
+<div id = "aliasWindow" class="background">
+    <h1>Void</h1>
+    <div class="input-section">
+        <form id="aliasForm">
+            <input id="room" type="text" autocomplete="off" style="background-color: #1a1a1a; text-align: center;" name="room" placeholder="Room"><br><br>
+            <input id="alias" type="text" autocomplete="off" style="background-color: #1a1a1a; text-align: center;" name="alias" placeholder="Alias"><br><br>
+            <input id="enterbutton" type="button" autocomplete="off"  value="Enter Room" onclick="enterRoom()"
+                   style="background-color: #1a1a1a; stroke-width: 0;"
+            >
+        </form>
+    </div>
+</div>
+<div id = "chatlog">
+    <h1 id="Chat_Header"></h1>
+    <form id="chatform">
+        <input id="msg" autocomplete="off" type="text" name="message-input" value="" style="height: 3vh;
+           color: #f2f2f2;
+           width: 87vw;
+           background-color: #1a1a1a;
+           display: inline-block;
+           float: left;
+           padding-left: 1vw;
+           padding-right: 1vw;"
+        >
+        <input id="sendButton" type="submit" autocomplete="off" onclick="submitMessage(); return false" name="SendButton" value = "Send" style = "width: 10vw;
+           color: #f2f2f2;
+           background-color: #1a1a1a;
+           display: inline-block;
+           float: left;
+           text-align: center;
+           height: 3vh;"
+        >
+    </form>
+</div>
+</body>
 <script src="/socket.io/socket.io.js"></script>
 <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
-  var socket = io.connect('http://localhost:5000');
-  var room;
-  var alias;
-  $('form').submit(function(){
-    room = $('#room').val();
-    alias = $('#alias').val();
-      /*
-       Should add checks here if the room and alias entered are blank
-       */
+    var socket = io.connect();
+    var newline = "<br>";
+    $( document ).ready(function() {
+        document.getElementById('chatlog').style.display='none';
+        document.getElementById('aliasWindow').style.display='block';
+        /*
+         LISTENER
+         */
+        socket.on('updateChat',function(user,data){
+            console.log("updateChat called: message = "+ data);
+            var message = data;
+            document.body.innerHTML = document.body.innerHTML + user + ": " + message + newline;
+        });
+        socket.on('serverMessage',function(data){
+            var message = data;
+            document.body.innerHTML = document.body.innerHTML + "server: " + message + newline;
+        });
+        socket.on('updateRoomName',function(roomname){
+            document.getElementById('Chat_Header').innerHTML = "Channel: " + roomname;
+        });
+        //When enter is pressed in alias input
+        $('#alias').keypress(function(e) {
+            if(e.which == 13){
+                $(this).blur();
+                $('#enterbutton').focus().click();
+                return false;
+            }
+        });
+        //When enter is pressed in chat input
+        $('#chatform').keypress(function(e) {
+            if(e.which == 13) {
+                submitMessage();
+                e.preventDefault();
+                return false;
+            }
+        });
+    });
+    function enterRoom(){
+        document.getElementById('chatlog').style.display='block';
+        document.getElementById('aliasWindow').style.display='none';
+        var alias = $('#alias').val();
+        var room = $('#room').val();
+        socket.emit('joinroom',alias,room);
+    }
 
-    socket.emit('createalias',alias);
-    socket.emit('joinroom',room);
-    socket.emit('enterRoom');
-
-  });
-
+    function submitMessage(){
+        var message = $('#msg').val();
+        socket.emit("sendmsg",message);
+    }
 
 </script>
-
- </body>
+</body>
 </html>

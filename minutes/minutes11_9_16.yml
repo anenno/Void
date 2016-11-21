@@ -1,0 +1,20 @@
+date: November 9, 2016
+meeting_type: TA
+attendance: [orkhiyae, ajnenno2]
+absent: []
+excused_absences: [mitchelt]
+task_progress: 
+  [
+  {ubit: mitchelt, progress: },
+  {ubit: orkhiyae, progress: },
+  {ubit: ajnenno2, progress: }
+  ]
+issues: 
+  [
+  {ubit: mitchelt, issue:},
+  {ubit: orkhiyae, issue:Fix issues for messages},
+  {ubit: ajnenno2, issue:Encrypt chat with Https}
+  ]
+Notes:
+
+

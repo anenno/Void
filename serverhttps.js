@@ -1,37 +1,41 @@
 /**
- * Created by Mitch on 11/20/2016.
+ * Created by mitch on 11/21/16.
+ */
+/**
+ * Created by Mitch on 11/21/2016.
  */
 
-var PORT = 5000;
-
+var PORT_HTTPS = 5001;
+var fs = require('fs');
+var https = require('https');
 var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+
+var options = {
+    key: fs.readFileSync('./file.pem'),
+    cert: fs.readFileSync('./file.crt')
+};
+
+var io = require('socket.io')(https);
 
 app.get('/',function(req,res){
     res.sendFile(__dirname + '/index.html');
 });
 
+https.createServer(options,app).listen(PORT_HTTPS);
+console.log('listening on*:'+ PORT_HTTPS);
 
 
-//Listener
-http.listen(PORT,function(){
-    console.log('listening on*:'+PORT);
-});
 //All active users in the room
 
 io.sockets.on('connection',function(socket){
 
-    socket.on('joinroom',function(alias,room){
+    socket.on('joinroom',function(alias){
         socket.alias = alias;
-        socket.room = room;
-        socket.join(room);
-        io.sockets.in(socket.room).emit('serverMessage',socket.alias + " has joined the channel");
-        socket.emit('updateRoomName',socket.room);
+        io.sockets.emit('serverMessage',socket.alias + " has joined the channel");
     });
 
     socket.on('sendmsg',function(data){
-        io.sockets.in(socket.room).emit('updateChat',socket.alias,data);
+        io.sockets.emit('updateChat',socket.alias,data);
     });
 
     socket.on('newuser',function(data,callback){
@@ -42,10 +46,8 @@ io.sockets.on('connection',function(socket){
         if(socket.alias == null){
             //Do nothing;
         }else{
-            io.sockets.in(socket.room).emit('serverMessage',socket.alias + " has left the channel");
-            socket.leave(socket.room);
+            io.sockets.emit('serverMessage',socket.alias + " has left the channel");
         }
-0
     });
 
 });
@@ -75,8 +77,3 @@ function nameExists(users){
 function updateClientSockets(socket){
 
 }
-
-
-
-
-
