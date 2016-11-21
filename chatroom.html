@@ -41,7 +41,7 @@
     var socket = io(dir);
 
     /*
-            LISTENER
+     LISTENER
      */
     socket.on('updateChat',function(user,data){
         console.log("updateChat called: message = "+ data);
@@ -55,13 +55,13 @@
 
     });
     /*
-        Submit Function
+     Submit Function
      */
     function submitMessage(){
         /* Local Update of HTML Div - Used this for testing
-            var newline = "<br>";
-            var message = $('#msg').val();
-            document.body.innerHTML = document.body.innerHTML + message + newline;
+         var newline = "<br>";
+         var message = $('#msg').val();
+         document.body.innerHTML = document.body.innerHTML + message + newline;
          */
 
         var message = $('#msg').val();
