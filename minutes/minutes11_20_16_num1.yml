@@ -1,0 +1,21 @@
+date: November 20, 2016
+meeting_type: group
+attendance: [mitchelt, ajnenno2]
+absent: [justynth]
+excused_absences: [orkhiyae]
+task_progress: 
+  [
+  {ubit: mitchelt, progress: working on making aliases show up},
+  {ubit: justynth, progress: },
+  {ubit: orkhiyae, progress: },
+  {ubit: ajnenno2, progress: cleaned up code on server, generated certs for https server}
+  ]
+issues: 
+  [
+  {ubit: mitchelt, issue: },
+  {ubit: justynth, issue: },
+  {ubit: orkhiyae, issue: },
+  {ubit: ajnenno2, issue: }
+  ]
+Notes:
+  {}
