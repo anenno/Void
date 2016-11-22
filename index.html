@@ -86,10 +86,11 @@
 </body>
 <script src="/socket.io/socket.io.js"></script>
 <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<script type='text/javascript' src="chat.js"></script>
 <script>
     var socket = io.connect();
     var newline = "<br>";
-    $( document ).ready(function() {
+    $( document ).ready(function(){
         document.getElementById('chatlog').style.display='none';
         document.getElementById('aliasWindow').style.display='block';
         /*
@@ -106,6 +107,9 @@
         });
         socket.on('updateRoomName',function(roomname){
             document.getElementById('Chat_Header').innerHTML = "Channel: " + roomname;
+        });
+        socket.on('userNameNotAvailable',function(){
+
         });
         //When enter is pressed in alias input
         $('#alias').keypress(function(e) {
@@ -124,19 +128,22 @@
             }
         });
     });
+
     function enterRoom(){
-        document.getElementById('chatlog').style.display='block';
-        document.getElementById('aliasWindow').style.display='none';
         var alias = $('#alias').val();
         var room = $('#room').val();
-        socket.emit('joinroom',alias,room);
-    }
+        if(isNameAvailable(room,alias) == true){
+            socket.emit('joinroom',alias,room);
+            document.getElementById('chatlog').style.display='block';
+            document.getElementById('aliasWindow').style.display='none';
+        }else{
 
+        }
+    }
     function submitMessage(){
         var message = $('#msg').val();
         socket.emit("sendmsg",message);
     }
-
 </script>
 </body>
 </html>

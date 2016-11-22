@@ -18,16 +18,24 @@ app.get('/',function(req,res){
 http.listen(PORT,function(){
     console.log('listening on*:'+PORT);
 });
-//All active users in the room
 
 io.sockets.on('connection',function(socket){
 
-    socket.on('joinroom',function(alias,room){
-        socket.alias = alias;
-        socket.room = room;
-        socket.join(room);
-        io.sockets.in(socket.room).emit('serverMessage',socket.alias + " has joined the channel");
-        socket.emit('updateRoomName',socket.room);
+    socket.on('joinroom',function(alias,roomname){
+            socket.alias = alias;
+            socket.room = roomname;
+            var user = new user();
+            setUser(user,socket,socket.alias,socket.room);
+            //Check if room exists already
+            if(doesRoomExist(roomname) == false){
+                //Create new room object
+                var room = new room();
+                setRoom(room,roomname);
+            }else{
+                //Do not create the new room object
+            }
+            io.sockets.in(socket.room).emit('serverMessage',socket.alias + " has joined the channel");
+            socket.emit('updateRoomName',socket.room);
     });
 
     socket.on('sendmsg',function(data){
@@ -44,6 +52,7 @@ io.sockets.on('connection',function(socket){
         }else{
             io.sockets.in(socket.room).emit('serverMessage',socket.alias + " has left the channel");
             socket.leave(socket.room);
+            removeUserFromRoom(socket.alias);
         }
 0
     });

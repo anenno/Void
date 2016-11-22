@@ -22,17 +22,24 @@ function getUser(roomname,username){
     var room = getRoom(roomname);
     return room.connectedUsers[username];
 }
-
-function addUserToRoom(username){
-    if(isNameAvailable(username)){
-        connectedUsers.push(clientSocket);
-        return true;
-    }else{
-        return false;
-    }
+function setUser(user,socket,alias,room){
+    user.socket = socket;
+    user.alias = alias;
+    user.room = room;
+    addUserToRoom(user,room);
 }
-function removeUserFromRoom(username){
+function setRoom(room,name){
+    room.name = name;
 
+}
+function addUserToRoom(user,room){
+    room.connectedUsers.push(user);
+}
+function removeUserFromRoom(username,room){
+    var index = room.connectedUsers.indexOf(username);
+    if(index > -1){
+        room.connectedUsers.splice(index,1);
+    }
 }
 function isNameAvailable(roomname,username){
     var room = getRoom(roomname);
@@ -42,5 +49,14 @@ function isNameAvailable(roomname,username){
     }else{
         //Username exists return false
         return false;
+    }
+}
+function doesRoomExist(roomname){
+    if(rooms.indexOf(roomname) == -1){
+        //Room does not exist yet
+        return false;
+    }else{
+        //Room already exists
+        return true;
     }
 }
