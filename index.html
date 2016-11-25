@@ -136,7 +136,7 @@
     function isValidName() {
         var alias = $('#alias').val();
         var roomname = $('#room').val();
-        if (alias == "" || room == "") {
+        if (alias == "" || roomname == "") {
             alert("Please enter room and alias");
         } else {
             socket.emit('checkName', alias, roomname);
