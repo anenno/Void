@@ -34,10 +34,14 @@ http.listen(PORT,function(){
     Socket.IO Functions
     These handle most communication between client and server
  */
-
-
 io.sockets.on('connection',function(socket){
-
+    socket.on('checkName',function(alias,roomname){
+        if(isNameAvailable(roomname,alias) == true){
+            socket.emit('nameAvailable');
+        }else{
+            socket.emit('nameTaken',alias);
+        }
+    });
     socket.on('joinroom',function(alias,roomname){
             //Check if alias taken
             if(isNameAvailable(roomname, alias) == true){
@@ -61,21 +65,13 @@ io.sockets.on('connection',function(socket){
                 }
 
                 //Add User to Room
-                addUserToRoom(newUser,socket.roomName);
+                addUserToRoom(newUser,newUser.roomname);
 
 
             }else{
                 //Emit to client that name is not available and do not join room
-                console.log("Name Exists");
+                socket.emit('nameTaken',alias);
             }
-
-            /*
-            socket.alias = alias;
-            socket.room = roomname;
-            socket.join(roomname);
-            io.sockets.in(socket.room).emit('serverMessage',socket.alias + " has joined the channel");
-            socket.emit('updateRoomName',socket.room);
-            */
     });
 
     socket.on('sendmsg',function(data){
