@@ -56,19 +56,27 @@ module.exports = function() {
     this.isNameAvailable = function(roomname,username){
         //Check if room exists
         //If it does then check if name exists
-        if(this.roomExists(roomname) == true){
-            var connectedUsers = this.getRoom(roomname).connectedUsers;
-            var result = connectedUsers[username];
-            if(result === undefined){
-                //Username does not exist return true that username is available
-                return true;
-            }else {
-                //Username exists return false it is not available
-                return false;
-            }
-        //If room does not exist yet just return true
+        if(roomname == "" || username == ""){
+
+            //If a user enters any type of html tags as alias/room this will return false
+            // and use the same message as if the name was taken not allowing them
+            // to enter the room.
+            return false;
         }else{
-            return true;
+            if(this.roomExists(roomname) == true){
+                var connectedUsers = this.getRoom(roomname).connectedUsers;
+                var result = connectedUsers[username];
+                if(result === undefined){
+                    //Username does not exist return true that username is available
+                    return true;
+                }else {
+                    //Username exists return false it is not available
+                    return false;
+                }
+                //If room does not exist yet just return true
+            }else{
+                return true;
+            }
         }
     };
 
