@@ -58,9 +58,11 @@ module.exports = function() {
         //If it does then check if name exists
         if(roomname == "" || username == ""){
 
-            //If a user enters any type of html tags as alias/room this will return false
-            // and use the same message as if the name was taken not allowing them
-            // to enter the room.
+            /*
+                If a user enters any HTML tags in their alias/room and the result is an empty string
+                This will return false as if the alias entered has been taken.
+                
+            */
             return false;
         }else{
             if(this.roomExists(roomname) == true){
