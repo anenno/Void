@@ -1,0 +1,18 @@
+date: November 19, 2016
+meeting_type: group
+attendance: [mitchelt, orkhiyae]
+absent: []
+excused_absences: [ajnenno2]
+task_progress: 
+  [
+  {ubit: mitchelt, progress: Discussed merging index.html and chatroom.html},
+  {ubit: orkhiyae, progress: Discussed merging index.html and chatroom.html},
+  {ubit: ajnenno2, progress: }
+  ]
+issues: 
+  [
+  {ubit: mitchelt, issue:},
+  {ubit: orkhiyae, issue:},
+  {ubit: ajnenno2, issue:}
+  ]
+Notes:

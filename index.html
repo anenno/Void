@@ -55,7 +55,7 @@
         <form id="aliasForm">
             <input id="room" type="text" autocomplete="off" style="background-color: #1a1a1a; text-align: center;" name="room" placeholder="Room"><br><br>
             <input id="alias" type="text" autocomplete="off" style="background-color: #1a1a1a; text-align: center;" name="alias" placeholder="Alias"><br><br>
-            <input id="enterbutton" type="button" autocomplete="off"  value="Enter Room" onclick="enterRoom()"
+            <input id="enterbutton" type="button" autocomplete="off"  value="Enter Room" onclick="isValidName()"
                    style="background-color: #1a1a1a; stroke-width: 0;"
             >
         </form>
@@ -89,7 +89,8 @@
 <script>
     var socket = io.connect();
     var newline = "<br>";
-    $( document ).ready(function() {
+
+    $( document ).ready(function(){
         document.getElementById('chatlog').style.display='none';
         document.getElementById('aliasWindow').style.display='block';
         /*
@@ -106,6 +107,13 @@
         });
         socket.on('updateRoomName',function(roomname){
             document.getElementById('Chat_Header').innerHTML = "Channel: " + roomname;
+        });
+
+        socket.on('nameTaken',function(name){
+            alert(name + " is already in use! Please enter new name to join channel");
+        });
+        socket.on('nameAvailable',function(){
+            enterRoom();
         });
         //When enter is pressed in alias input
         $('#alias').keypress(function(e) {
@@ -124,19 +132,27 @@
             }
         });
     });
+
+    function isValidName() {
+        var alias = $('#alias').val();
+        var roomname = $('#room').val();
+        if (alias == "" || roomname == "") {
+            alert("Please enter room and alias");
+        } else {
+            socket.emit('checkName', alias, roomname);
+        }
+    }
     function enterRoom(){
+        var alias = $('#alias').val();
+        var roomname = $('#room').val();
+        socket.emit('joinroom',alias,roomname);
         document.getElementById('chatlog').style.display='block';
         document.getElementById('aliasWindow').style.display='none';
-        var alias = $('#alias').val();
-        var room = $('#room').val();
-        socket.emit('joinroom',alias,room);
     }
-
     function submitMessage(){
         var message = $('#msg').val();
         socket.emit("sendmsg",message);
     }
-
 </script>
 </body>
 </html>

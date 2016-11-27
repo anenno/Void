@@ -2,36 +2,80 @@
  * Created by Mitch on 11/20/2016.
  */
 
-var PORT = 5000;
+/*
+    Load Module chat.js
+ */
+require('./chat.js')();
 
-var app = require('express')();
+var PORT = 5000;
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+/*
+    Express Routes
+ */
+//Serve index.html
 app.get('/',function(req,res){
     res.sendFile(__dirname + '/index.html');
 });
+//Serve static files in public
+app.use(express.static(__dirname + '/public'));
 
-
-
-//Listener
+/*
+    Listeners
+ */
 http.listen(PORT,function(){
     console.log('listening on*:'+PORT);
 });
-//All active users in the room
 
+/*
+    Socket.IO Functions
+    These handle most communication between client and server
+ */
 io.sockets.on('connection',function(socket){
+    socket.on('checkName',function(alias,roomname){
+        if(isNameAvailable(roomname,alias) == true){
+            socket.emit('nameAvailable');
+        }else{
+            socket.emit('nameTaken',alias);
+        }
+    });
+    socket.on('joinroom',function(alias,roomname){
+            //Check if alias taken
+            if(isNameAvailable(roomname, alias) == true){
+                //Set socket variables and join socket to room
+                socket.alias = alias;
+                socket.roomName = roomname;
+                socket.join(roomname);
+                var newUser = new User(socket,socket.alias,socket.roomName);
+                socket.user = newUser;
 
-    socket.on('joinroom',function(alias,room){
-        socket.alias = alias;
-        socket.room = room;
-        socket.join(room);
-        io.sockets.in(socket.room).emit('serverMessage',socket.alias + " has joined the channel");
-        socket.emit('updateRoomName',socket.room);
+                //Check if room is already created in rooms array
+                if(roomExists(roomname) == true){
+                    io.sockets.in(socket.roomName).emit('serverMessage',socket.alias + " has joined the channel");
+                    socket.emit('updateRoomName',socket.roomName);
+
+                }else{
+                    var newRoom = new Room(roomname,"",socket,socket);
+                    updateChatRooms(newRoom);
+                    io.sockets.in(socket.roomName).emit('serverMessage',socket.alias + " has joined the channel");
+                    socket.emit('updateRoomName',socket.roomName);
+                }
+
+                //Add User to Room
+                addUserToRoom(newUser,newUser.roomname);
+
+
+            }else{
+                //Emit to client that name is not available and do not join room
+                socket.emit('nameTaken',alias);
+            }
     });
 
     socket.on('sendmsg',function(data){
-        io.sockets.in(socket.room).emit('updateChat',socket.alias,data);
+        io.sockets.in(socket.roomName).emit('updateChat',socket.alias,data);
     });
 
     socket.on('newuser',function(data,callback){
@@ -39,44 +83,25 @@ io.sockets.on('connection',function(socket){
     });
 
     socket.on('disconnect',function(){
+
         if(socket.alias == null){
             //Do nothing;
         }else{
-            io.sockets.in(socket.room).emit('serverMessage',socket.alias + " has left the channel");
-            socket.leave(socket.room);
+            var chatRoom = getRoom(socket.roomName);
+            var numUsers = chatRoom.numberOfUsers;
+            var roomname = chatRoom.roomname;
+            if(numUsers == 1){
+                //Remove user from room and delete room
+                removeUserFromRoom(socket.alias,socket.roomName);
+                deleteRoom(socket.roomName);
+                socket.leave(socket.roomName);
+            }else{
+                //only remove user from room
+                removeUserFromRoom(socket.alias,socket.roomName);
+                io.sockets.in(socket.roomName).emit('serverMessage',socket.alias + " has left the channel");
+                socket.leave(socket.roomName);
+            }
         }
-0
     });
 
 });
-//Helper Functions
-function listrooms(chatrooms){
-    console.log('server: Current Active Rooms');
-    for( i = 1; i < chatrooms.length; i++){
-        console.log('server: RoomID - ' + chatrooms[i]);
-    }
-}
-function roomexists(chatrooms,roomname){
-    for( i = 1; i < chatrooms.length; i++){
-        if(roomname == chatrooms[i]){
-            return true;
-        }
-    }
-    return false;
-}
-function nameExists(users){
-    for( i = 1; i < users.length; i++){
-        if(users == users[i]){
-            return true;
-        }
-    }
-    return false;
-}
-function updateClientSockets(socket){
-
-}
-
-
-
-
-

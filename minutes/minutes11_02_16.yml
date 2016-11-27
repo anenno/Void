@@ -1,0 +1,21 @@
+date: November 2, 2016
+meeting_type: TA
+attendance: [mitchelt, ajnenno2, orkhiyae]
+absent: [justynth]
+excused_absences: []
+task_progress: 
+  [
+  {ubit: mitchelt, progress: trying to make messages show up},
+  {ubit: justynth, progress: },
+  {ubit: orkhiyae, progress: trying to make messages show up, going to start working on encryption, maybe HTTPS},
+  {ubit: ajnenno2, progress: found how to have node server running all the time}
+  ]
+issues: 
+  [
+  {ubit: mitchelt, issue: },
+  {ubit: justynth, issue: },
+  {ubit: orkhiyae, issue: },
+  {ubit: ajnenno2, issue: }
+  ]
+Notes:
+  {making messages show up is difficult, make sure socket.io is working properly, update chatroom}
