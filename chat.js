@@ -93,6 +93,15 @@ module.exports = function() {
         var key = room.name;
         chatrooms[key] = room;
     };
+    this.getUserList = function(roomname){
+        var connectedUsers = this.getRoom(roomname).connectedUsers;
+        var userList = "";
+
+        for(var i in connectedUsers){
+            userList = userList + connectedUsers[i].alias + "\n";
+        }
+        console.log(userList);
+    }
 };
 
 

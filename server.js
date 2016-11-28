@@ -50,7 +50,6 @@ io.sockets.on('connection',function(socket){
             socket.emit('nameTaken',alias);
         }
     });
-
     socket.on('joinroom',function(alias,roomname){
 
             //STRIP HTML TAGS
@@ -68,18 +67,20 @@ io.sockets.on('connection',function(socket){
 
                 //Check if room is already created in rooms array
                 if(roomExists(_roomname) == true){
-                    io.sockets.in(socket.roomName).emit('serverMessage',socket.alias + " has joined the channel");
+                    addUserToRoom(newUser,newUser.roomname);
+                    io.sockets.in(socket.roomName).emit('userJoined',socket.alias + " has joined the channel",getUserList(_roomname));
                     socket.emit('updateRoomName',socket.roomName);
 
                 }else{
                     var newRoom = new Room(_roomname,"",newUser,newUser);
                     updateChatRooms(newRoom);
-                    io.sockets.in(socket.roomName).emit('serverMessage',socket.alias + " has joined the channel");
+                    addUserToRoom(newUser,newUser.roomname);
+                    io.sockets.in(socket.roomName).emit('userJoined',socket.alias + " has joined the channel",getUserList(_roomname));
                     socket.emit('updateRoomName',socket.roomName);
                 }
 
                 //Add User to Room
-                addUserToRoom(newUser,newUser.roomname);
+
 
 
             }else{
@@ -116,5 +117,4 @@ io.sockets.on('connection',function(socket){
             }
         }
     });
-
 });
