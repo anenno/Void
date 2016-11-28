@@ -12,7 +12,7 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-
+var striptags = require('striptags');
 /*
     Express Routes
  */
@@ -33,32 +33,46 @@ http.listen(PORT,function(){
 /*
     Socket.IO Functions
     These handle most communication between client and server
+
+    Striptags is being used in data the user sends to the server that could update display
+    At this point there is no need for SQL injection security because we are not using a data base.
+
  */
 io.sockets.on('connection',function(socket){
+
     socket.on('checkName',function(alias,roomname){
-        if(isNameAvailable(roomname,alias) == true){
+        var _alias = striptags(alias);
+        var _roomname = striptags(roomname);
+
+        if(isNameAvailable(_roomname,_alias) == true){
             socket.emit('nameAvailable');
         }else{
             socket.emit('nameTaken',alias);
         }
     });
+
     socket.on('joinroom',function(alias,roomname){
+
+            //STRIP HTML TAGS
+            var _alias = striptags(alias);
+            var _roomname = striptags(roomname);
+
             //Check if alias taken
-            if(isNameAvailable(roomname, alias) == true){
+            if(isNameAvailable(_roomname, _alias) == true){
                 //Set socket variables and join socket to room
-                socket.alias = alias;
-                socket.roomName = roomname;
-                socket.join(roomname);
+                socket.alias = _alias;
+                socket.roomName = _roomname;
+                socket.join(_roomname);
                 var newUser = new User(socket,socket.alias,socket.roomName);
                 socket.user = newUser;
 
                 //Check if room is already created in rooms array
-                if(roomExists(roomname) == true){
+                if(roomExists(_roomname) == true){
                     io.sockets.in(socket.roomName).emit('serverMessage',socket.alias + " has joined the channel");
                     socket.emit('updateRoomName',socket.roomName);
 
                 }else{
-                    var newRoom = new Room(roomname,"",socket,socket);
+                    var newRoom = new Room(_roomname,"",newUser,newUser);
                     updateChatRooms(newRoom);
                     io.sockets.in(socket.roomName).emit('serverMessage',socket.alias + " has joined the channel");
                     socket.emit('updateRoomName',socket.roomName);
@@ -75,11 +89,10 @@ io.sockets.on('connection',function(socket){
     });
 
     socket.on('sendmsg',function(data){
-        io.sockets.in(socket.roomName).emit('updateChat',socket.alias,data);
-    });
+        //STRIP HTML TAGS
+        var strippedMsg = striptags(data);
 
-    socket.on('newuser',function(data,callback){
-
+        io.sockets.in(socket.roomName).emit('updateChat',socket.alias,strippedMsg);
     });
 
     socket.on('disconnect',function(){
