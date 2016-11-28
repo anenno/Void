@@ -101,7 +101,11 @@ module.exports = function() {
             userList = userList + connectedUsers[i].alias + "\n";
         }
         console.log(userList);
+        return userList;
+
+
     }
+
 };
 
 

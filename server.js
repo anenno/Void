@@ -68,14 +68,16 @@ io.sockets.on('connection',function(socket){
                 //Check if room is already created in rooms array
                 if(roomExists(_roomname) == true){
                     addUserToRoom(newUser,newUser.roomname);
-                    io.sockets.in(socket.roomName).emit('userJoined',socket.alias + " has joined the channel",getUserList(_roomname));
+                    var users = getRoom(_roomname).connectedUsers;
+                    io.sockets.in(socket.roomName).emit('userJoined',socket.alias + " has joined the channel",users);
                     socket.emit('updateRoomName',socket.roomName);
 
                 }else{
                     var newRoom = new Room(_roomname,"",newUser,newUser);
                     updateChatRooms(newRoom);
                     addUserToRoom(newUser,newUser.roomname);
-                    io.sockets.in(socket.roomName).emit('userJoined',socket.alias + " has joined the channel",getUserList(_roomname));
+                    var users = getRoom(_roomname).connectedUsers;
+                    io.sockets.in(socket.roomName).emit('userJoined',socket.alias + " has joined the channel",users);
                     socket.emit('updateRoomName',socket.roomName);
                 }
 
@@ -104,6 +106,7 @@ io.sockets.on('connection',function(socket){
             var chatRoom = getRoom(socket.roomName);
             var numUsers = chatRoom.numberOfUsers;
             var roomname = chatRoom.roomname;
+            var users = chatRoom.connectedUsers;
             if(numUsers == 1){
                 //Remove user from room and delete room
                 removeUserFromRoom(socket.alias,socket.roomName);
@@ -112,7 +115,7 @@ io.sockets.on('connection',function(socket){
             }else{
                 //only remove user from room
                 removeUserFromRoom(socket.alias,socket.roomName);
-                io.sockets.in(socket.roomName).emit('serverMessage',socket.alias + " has left the channel");
+                io.sockets.in(socket.roomName).emit('userLeft',socket.alias + " has left the channel",users);
                 socket.leave(socket.roomName);
             }
         }

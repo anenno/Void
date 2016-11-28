@@ -129,19 +129,21 @@
             var message = data;
             document.getElementById('chatlog').innerHTML = document.getElementById('chatlog').innerHTML + message + newline;
         });
+
+
         socket.on('userJoined',function(data,users){
             var message = data;
             //Update chat that a new user has joined
             document.getElementById('chatlog').innerHTML = document.getElementById('chatlog').innerHTML + message + newline;
             //Update User List Div
-            document.getElementById('userlist').innerHTML = document.getElementById('userHeader').val() + users;
+            updateUserList(users);
         });
-        socket.on('userLeft',function(data){
+        socket.on('userLeft',function(data,users){
             var message = data;
             //Update chat that a user has left
             document.getElementById('chatlog').innerHTML = document.getElementById('chatlog').innerHTML + message + newline;
             //Update User List Div
-            document.getElementById('userlist').innerHTML = document.getElementById('userHeader').val() + users;
+            updateUserList(users)
         });
         socket.on('updateRoomName',function(roomname){
             document.getElementById('chatHeader').innerHTML = "Channel: " + roomname;
@@ -198,9 +200,6 @@
         document.getElementById('aliasWindow').style.display='none';
         document.getElementById('msg').focus();
 
-        //Load active user list
-        document.getElementById('userlist').innerHTML = activeUsers;
-
     }
     function submitMessage(){
         var message = $('#msg').val();
@@ -208,6 +207,12 @@
         document.getElementById('msg').value = '';
         document.getElementById('msg').focus();
 
+    }
+    function updateUserList(connectedUsers){
+        var userListDiv = document.getElementById('userlist');
+        for(var i in connectedUsers) {
+            userListDiv.innerHTML = userListDiv.innerHTML + connectedUsers[i].alias + "\n";
+        }
     }
 </script>
 </body>
