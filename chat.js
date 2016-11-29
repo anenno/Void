@@ -84,7 +84,14 @@ module.exports = function() {
     this.removeUserFromRoom = function(username,roomname){
         if(username in this.getRoom(roomname).connectedUsers){
             delete this.getRoom(roomname).connectedUsers[username];
+            delete this.getRoom(roomname).connectedUsers[undefined];
+            delete this.getRoom(roomname).connectedUsers[null];
             this.getRoom(roomname).connectedUsers.numberOfUsers = this.getRoom(roomname).connectedUsers.numberOfUsers - 1;
+
+            /*
+            Clean up undefined / null object
+             */
+
         }else {
             //Do Nothing - Username not found
         }
@@ -170,9 +177,12 @@ module.exports = function() {
         var connectedUsers = this.getRoom(roomname).connectedUsers;
         var userListString = "";
         for(var i in connectedUsers) {
-            var user = connectedUsers[i];
+            var user = connectedUsers[i]
             userListString = userListString + user.alias + "<br>";
+
+
         }
+        console.log(userListString);
         return userListString;
     }
 };
