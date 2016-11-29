@@ -107,7 +107,7 @@ io.sockets.on('connection',function(socket){
         }else{
             var chatRoom = getRoom(socket.roomName);
             var numUsers = chatRoom.numberOfUsers;
-            var roomname = chatRoom.roomname;
+            var roomname = chatRoom.name;
 
             /*
             If last user in room delete room object
@@ -123,8 +123,9 @@ io.sockets.on('connection',function(socket){
                 Emit to all connected users that a user has left
                 Update user list in room as well
                  */
-                var users = getUserList(roomname);
+
                 removeUserFromRoom(socket.alias,socket.roomName);
+                var users = getUserList(roomname);
                 io.sockets.in(socket.roomName).emit('userLeft',socket.alias + " has left the channel",users);
                 socket.leave(socket.roomName);
             }

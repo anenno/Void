@@ -53,7 +53,7 @@
             border-width: 1px;
         }
         #userlist {
-            color:white;
+            color:greenyellow;
             background: #1a1a1a ;
             padding: 3px;
             position: relative;
@@ -62,8 +62,7 @@
             height:96vh;
             float:right;
             overflow-y:auto;
-            border:solid;
-            border-width: 1px;
+
 
         }
         .buttonLine{
@@ -100,7 +99,6 @@
         <h1 id="chatHeader"></h1>
     </div>
     <div id = "userlist">
-        <h2 id ="userHeader">User List</h2>
     </div>
     <input class = "buttonLine" id="msg" autocomplete="off" type="text" name="message-input" placeholder="Enter Message Here..." value="">
     <input class = "buttonLine" id="sendButton" type="submit" autocomplete="off" onclick="submitMessage(); return false" name="SendButton" value = "Send">
@@ -111,7 +109,6 @@
 <script>
     var socket = io.connect();
     var newline = "<br>";
-
     $( document ).ready(function(){
         document.getElementById('room').focus();
         document.getElementById('chatroom').style.display='none';
@@ -135,6 +132,7 @@
             var message = data;
             //Update chat that a new user has joined
             document.getElementById('chatlog').innerHTML = document.getElementById('chatlog').innerHTML + message + newline;
+            console.log('1: ' + users[0]);
             //Update User List Div
             updateUserList(users);
         });
@@ -210,10 +208,8 @@
     }
     function updateUserList(connectedUsers){
         console.log("updateUserList called");
-        for(i = 0; i < connectedUsers.length;i++){
-            document.getElementById('userlist').innerHTML = connectedUsers[i] + newline;
-            console.log(connectedUsers[i]);
-        }
+        console.log(connectedUsers);
+        document.getElementById('userlist').innerHTML = connectedUsers;
     }
 </script>
 </body>

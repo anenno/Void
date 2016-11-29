@@ -99,7 +99,7 @@ module.exports = function() {
             chatrooms.splice(index,1);
         }
     };
- 
+
     /*
     Checks if a name is available in specified room
 
@@ -167,16 +167,14 @@ module.exports = function() {
     Returns an array of usernames currently connected to a specified room
      */
     this.getUserList = function(roomname){
-        //Put User's name in array
         var connectedUsers = this.getRoom(roomname).connectedUsers;
-        var userList = [];
-        for(var i in connectedUsers){
-            userList[connectedUsers[i].alias] = connectedUsers[i].alias;
-            console.log(userList[i]);
+        var userListString = "";
+        for(var i in connectedUsers) {
+            var user = connectedUsers[i];
+            userListString = userListString + user.alias + "<br>";
         }
-        return userList;
+        return userListString;
     }
-
 };
 
 
