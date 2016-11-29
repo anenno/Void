@@ -50,7 +50,6 @@ io.sockets.on('connection',function(socket){
             socket.emit('nameTaken',alias);
         }
     });
-
     socket.on('joinroom',function(alias,roomname){
 
             //STRIP HTML TAGS
@@ -66,22 +65,28 @@ io.sockets.on('connection',function(socket){
                 var newUser = new User(socket,socket.alias,socket.roomName);
                 socket.user = newUser;
 
-                //Check if room is already created in rooms array
+                /*
+                Room has already been created
+                Simply add user to room
+                 */
                 if(roomExists(_roomname) == true){
-                    io.sockets.in(socket.roomName).emit('serverMessage',socket.alias + " has joined the channel");
+                    addUserToRoom(newUser,newUser.roomname);
+                    var users = getUserList(_roomname);
+                    io.sockets.in(socket.roomName).emit('userJoined',socket.alias + " has joined the channel",users);
                     socket.emit('updateRoomName',socket.roomName);
 
                 }else{
+                    /*
+                    Room has not been created yet
+                    Create Room Object and add user to room
+                     */
                     var newRoom = new Room(_roomname,"",newUser,newUser);
                     updateChatRooms(newRoom);
-                    io.sockets.in(socket.roomName).emit('serverMessage',socket.alias + " has joined the channel");
+                    addUserToRoom(newUser,newUser.roomname);
+                    var users = getUserList(_roomname);
+                    io.sockets.in(socket.roomName).emit('userJoined',socket.alias + " has joined the channel",users);
                     socket.emit('updateRoomName',socket.roomName);
                 }
-
-                //Add User to Room
-                addUserToRoom(newUser,newUser.roomname);
-
-
             }else{
                 //Emit to client that name is not available and do not join room
                 socket.emit('nameTaken',alias);
@@ -91,30 +96,39 @@ io.sockets.on('connection',function(socket){
     socket.on('sendmsg',function(data){
         //STRIP HTML TAGS
         var strippedMsg = striptags(data);
-
+        //Emit to all connected sockets the message
         io.sockets.in(socket.roomName).emit('updateChat',socket.alias,strippedMsg);
     });
 
     socket.on('disconnect',function(){
-
+        //Check to make sure alias exists and is not null
         if(socket.alias == null){
             //Do nothing;
         }else{
             var chatRoom = getRoom(socket.roomName);
             var numUsers = chatRoom.numberOfUsers;
-            var roomname = chatRoom.roomname;
+            var roomname = chatRoom.name;
+
+            /*
+            If last user in room delete room object
+             */
             if(numUsers == 1){
                 //Remove user from room and delete room
                 removeUserFromRoom(socket.alias,socket.roomName);
                 deleteRoom(socket.roomName);
                 socket.leave(socket.roomName);
             }else{
-                //only remove user from room
+                /*
+                Only remove user from room and update user list
+                Emit to all connected users that a user has left
+                Update user list in room as well
+                 */
+
                 removeUserFromRoom(socket.alias,socket.roomName);
-                io.sockets.in(socket.roomName).emit('serverMessage',socket.alias + " has left the channel");
+                var users = getUserList(roomname);
+                io.sockets.in(socket.roomName).emit('userLeft',socket.alias + " has left the channel",users);
                 socket.leave(socket.roomName);
             }
         }
     });
-
 });

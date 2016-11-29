@@ -24,27 +24,65 @@
             vertical-align: middle;
         }
 
-        h1 {
+        h2 {
             padding-top: 5vh;
             padding-left: 5vw;
             font-family: ‘Lucida Console’, Monaco, monospace;
+            font-size: 135%;
+            text-align:center;
 
         }
-        #chatlog {
+        #chatroom {
             color: white;
             background: #1a1a1a;
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             display:none;
+            height:100%;
+            width:100%;
+            position: relative;
         }
-        #chatform {
+        #chatlog {
             color:white;
             background: #1a1a1a ;
             padding: 3px;
-            position: fixed;
+            position: relative;
             bottom: 0;
-            width: 100%;
+            width: 80%;
+            height:96vh;
+            float:left;
+            overflow-y:auto;
+            border:solid;
+            border-width: 1px;
+        }
+        #userlist {
+            color:greenyellow;
+            background: #1a1a1a ;
+            padding: 3px;
+            position: relative;
+            bottom: 0;
+            width: 20%;
+            height:96vh;
+            float:right;
+            overflow-y:auto;
+            text-align:center;
+
+
+        }
+        .buttonLine{
+            color: #f2f2f2;
+            background-color: #1a1a1a;
+            position:relative;
+            bottom:0;
+            left:0;
+
+        }
+        #sendButton{
+            width:9.5%;
+        }
+        #msg{
+            width:70%;
         }
     </style>
 </head>
@@ -61,27 +99,15 @@
         </form>
     </div>
 </div>
-<div id = "chatlog">
-    <h1 id="Chat_Header"></h1>
-    <form id="chatform">
-        <input id="msg" autocomplete="off" type="text" name="message-input" value="" style="height: 3vh;
-           color: #f2f2f2;
-           width: 87vw;
-           background-color: #1a1a1a;
-           display: inline-block;
-           float: left;
-           padding-left: 1vw;
-           padding-right: 1vw;"
-        >
-        <input id="sendButton" type="submit" autocomplete="off" onclick="submitMessage(); return false" name="SendButton" value = "Send" style = "width: 10vw;
-           color: #f2f2f2;
-           background-color: #1a1a1a;
-           display: inline-block;
-           float: left;
-           text-align: center;
-           height: 3vh;"
-        >
-    </form>
+<div id = "chatroom">
+    <div id = "chatlog">
+        <h1 id="chatHeader"></h1>
+    </div>
+        <h2 id="userHeader">User List</h2>
+    <div id = "userlist">
+    </div>
+    <input class = "buttonLine" id="msg" autocomplete="off" type="text" name="message-input" placeholder="Enter Message Here..." value="">
+    <input class = "buttonLine" id="sendButton" type="submit" autocomplete="off" onclick="submitMessage(); return false" name="SendButton" value = "Send">
 </div>
 </body>
 <script src="/socket.io/socket.io.js"></script>
@@ -89,9 +115,9 @@
 <script>
     var socket = io.connect();
     var newline = "<br>";
-
     $( document ).ready(function(){
-        document.getElementById('chatlog').style.display='none';
+        document.getElementById('room').focus();
+        document.getElementById('chatroom').style.display='none';
         document.getElementById('aliasWindow').style.display='block';
         /*
          LISTENER
@@ -99,14 +125,32 @@
         socket.on('updateChat',function(user,data){
             console.log("updateChat called: message = "+ data);
             var message = data;
-            document.body.innerHTML = document.body.innerHTML + user + ": " + message + newline;
+            document.getElementById('chatlog').innerHTML = document.getElementById('chatlog').innerHTML + user + ": " + message + newline;
+            document.getElementById('chatlog').scrollTop = document.getElementById('chatlog').scrollHeight;
         });
         socket.on('serverMessage',function(data){
             var message = data;
-            document.body.innerHTML = document.body.innerHTML + "server: " + message + newline;
+            document.getElementById('chatlog').innerHTML = document.getElementById('chatlog').innerHTML + message + newline;
+        });
+
+
+        socket.on('userJoined',function(data,users){
+            var message = data;
+            //Update chat that a new user has joined
+            document.getElementById('chatlog').innerHTML = document.getElementById('chatlog').innerHTML + message + newline;
+            console.log('1: ' + users[0]);
+            //Update User List Div
+            updateUserList(users);
+        });
+        socket.on('userLeft',function(data,users){
+            var message = data;
+            //Update chat that a user has left
+            document.getElementById('chatlog').innerHTML = document.getElementById('chatlog').innerHTML + message + newline;
+            //Update User List Div
+            updateUserList(users)
         });
         socket.on('updateRoomName',function(roomname){
-            document.getElementById('Chat_Header').innerHTML = "Channel: " + roomname;
+            document.getElementById('chatHeader').innerHTML = "Channel: " + roomname;
         });
 
         socket.on('nameTaken',function(name){
@@ -115,7 +159,11 @@
         socket.on('nameAvailable',function(){
             enterRoom();
         });
-        //When enter is pressed in alias input
+
+
+        /*
+                Enter Button Listeners
+         */
         $('#alias').keypress(function(e) {
             if(e.which == 13){
                 $(this).blur();
@@ -123,11 +171,17 @@
                 return false;
             }
         });
-        //When enter is pressed in chat input
-        $('#chatform').keypress(function(e) {
-            if(e.which == 13) {
-                submitMessage();
-                e.preventDefault();
+        $('#room').keypress(function(e) {
+            if(e.which == 13){
+                $(this).blur();
+                $('#enterbutton').focus().click();
+                return false;
+            }
+        });
+        $('#msg').keypress(function(e) {
+            if(e.which == 13){
+                $(this).blur();
+                $('#sendButton').focus().click();
                 return false;
             }
         });
@@ -146,12 +200,22 @@
         var alias = $('#alias').val();
         var roomname = $('#room').val();
         socket.emit('joinroom',alias,roomname);
-        document.getElementById('chatlog').style.display='block';
+        document.getElementById('chatroom').style.display='block';
         document.getElementById('aliasWindow').style.display='none';
+        document.getElementById('msg').focus();
+
     }
     function submitMessage(){
         var message = $('#msg').val();
         socket.emit("sendmsg",message);
+        document.getElementById('msg').value = '';
+        document.getElementById('msg').focus();
+
+    }
+    function updateUserList(connectedUsers){
+        console.log("updateUserList called");
+        console.log(connectedUsers);
+        document.getElementById('userlist').innerHTML = connectedUsers;
     }
 </script>
 </body>
