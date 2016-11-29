@@ -209,9 +209,10 @@
 
     }
     function updateUserList(connectedUsers){
-        var userListDiv = document.getElementById('userlist');
-        for(var i in connectedUsers) {
-            userListDiv.innerHTML = userListDiv.innerHTML + connectedUsers[i].alias + "\n";
+        console.log("updateUserList called");
+        for(i = 0; i < connectedUsers.length;i++){
+            document.getElementById('userlist').innerHTML = connectedUsers[i] + newline;
+            console.log(connectedUsers[i]);
         }
     }
 </script>
