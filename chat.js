@@ -172,17 +172,22 @@ module.exports = function() {
 
     /*
     Returns an array of usernames currently connected to a specified room
+
+    There is a check being done within the for loop to make sure that
+    the alias is not undefined. If isn't then update the string, otherwise skip an undefined alias.
+    The undefined alias is being left over after a user object is deleted from the map. If we start running into
+    performance issue we will want to find a way to remove undefined/null map objects after deletion in removeUserFromRoom.
      */
     this.getUserList = function(roomname){
         var connectedUsers = this.getRoom(roomname).connectedUsers;
         var userListString = "";
         for(var i in connectedUsers) {
-            var user = connectedUsers[i]
-            userListString = userListString + user.alias + "<br>";
-
-
+            var user = connectedUsers[i];
+            if(connectedUsers[i].alias == undefined){
+            }else{
+                userListString = userListString + user.alias + "<br>";
+            }
         }
-        console.log(userListString);
         return userListString;
     }
 };
