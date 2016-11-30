@@ -4,6 +4,11 @@
 
 /*
     Load Module chat.js
+
+
+ Crypto JS - Need to look into this
+ https://github.com/brix/crypto-js/blob/develop/README.md
+
  */
 require('./chat.js')();
 
@@ -98,6 +103,7 @@ io.sockets.on('connection',function(socket){
         var strippedMsg = striptags(data);
         //Emit to all connected sockets the message
         io.sockets.in(socket.roomName).emit('updateChat',socket.alias,strippedMsg);
+
     });
 
     socket.on('disconnect',function(){
