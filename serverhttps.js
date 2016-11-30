@@ -11,8 +11,8 @@ var https = require('https');
 var app = require('express')();
 
 var options = {
-    key: fs.readFileSync('./file.pem'),
-    cert: fs.readFileSync('./file.crt')
+    key: fs.readFileSync('./certs/file.pem'),
+    cert: fs.readFileSync('./certs/file.crt')
 };
 
 var io = require('socket.io')(https);

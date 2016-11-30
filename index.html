@@ -111,7 +111,8 @@
     <input class = "buttonLine" id="sendButton" type="submit" autocomplete="off" onclick="submitMessage(); return false" name="SendButton" value = "Send">
 </div>
 </body>
-<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="/node_modules/crypto-js/crypto-js.js"></script>
 <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
     var socket = io.connect();
@@ -126,6 +127,9 @@
         socket.on('updateChat',function(user,data){
             console.log("updateChat called: message = "+ data);
             var message = data;
+
+            //Add Decryption of string here
+
             document.getElementById('chatlog').innerHTML = document.getElementById('chatlog').innerHTML + user + ": " + message + newline;
             document.getElementById('chatlog').scrollTop = document.getElementById('chatlog').scrollHeight;
         });
@@ -139,7 +143,6 @@
             var message = data;
             //Update chat that a new user has joined
             document.getElementById('chatlog').innerHTML = document.getElementById('chatlog').innerHTML + message + newline;
-            console.log('1: ' + users[0]);
             //Update User List Div
             updateUserList(users);
         });
@@ -208,14 +211,15 @@
     }
     function submitMessage(){
         var message = $('#msg').val();
+
+        //Add encryption here
+
         socket.emit("sendmsg",message);
         document.getElementById('msg').value = '';
         document.getElementById('msg').focus();
 
     }
     function updateUserList(connectedUsers){
-        console.log("updateUserList called");
-        console.log(connectedUsers);
         document.getElementById('userlist').innerHTML = connectedUsers;
     }
 </script>
