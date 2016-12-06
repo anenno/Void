@@ -4,8 +4,6 @@
 
 /*
     Load Module chat.js
-
-
  Crypto JS - Need to look into this
  https://github.com/brix/crypto-js/blob/develop/README.md
 
@@ -18,13 +16,39 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var striptags = require('striptags');
+var cryptico = require('cryptico');
+
+
+/*
+Encryption Test
+ */
+
+//This is working. The problem is that if someone has access to the key then
+// it can easily be decrypted - should randomly generate a key for the room
+
+/*
+var CryptoJS = require('crypto-js');
+var string = "This is a test";
+var ciphertext = CryptoJS.AES.encrypt(string,'key');
+console.log('Text to encrypt: ' + string);
+console.log('Encrypted text: ' + ciphertext);
+var bytes = CryptoJS.AES.decrypt(ciphertext.toString(),'key');
+var plaintext = bytes.toString(CryptoJS.enc.Utf8);
+console.log('Decrypted text: ' + plaintext);
+*/
+//##############################################
+
+
+
 /*
     Express Routes
  */
-//Serve index.html
-
 //Serve static files in public
 app.use(express.static(__dirname + '/public'));
+//Route to server bower (client side) libraries
+app.use('/bower_components',express.static(__dirname + '/bower_components'));
+//Route to serve client js files
+app.use('/clientjs',express.static(__dirname + '/clientjs'));
 
 app.get('/',function(req,res){
     res.sendFile(__dirname + '/index.html');
@@ -51,6 +75,7 @@ io.sockets.on('connection',function(socket){
         var _alias = striptags(alias);
         var _roomname = striptags(roomname);
 
+
         if(isNameAvailable(_roomname,_alias) == true){
             socket.emit('nameAvailable');
         }else{
@@ -69,7 +94,9 @@ io.sockets.on('connection',function(socket){
                 socket.alias = _alias;
                 socket.roomName = _roomname;
                 socket.join(_roomname);
-                var newUser = new User(socket,socket.alias,socket.roomName);
+
+                //Generate public key for user
+                var newUser = new User(socket,socket.alias,socket.roomName,socket.roomName);
                 socket.user = newUser;
 
                 /*
@@ -101,10 +128,14 @@ io.sockets.on('connection',function(socket){
     });
 
     socket.on('sendmsg',function(data){
+        console.log('sendmsg called');
         //STRIP HTML TAGS
-        var strippedMsg = striptags(data);
+        //var strippedMsg = striptags(data);
+        //var strippedMsg = data;
+        console.log(data);
         //Emit to all connected sockets the message
-        io.sockets.in(socket.roomName).emit('updateChat',socket.alias,strippedMsg);
+        io.sockets.in(socket.roomName).emit('updateChat',socket.alias,data);
+        console.log('emmitting message to clients');
 
     });
 

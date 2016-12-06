@@ -112,11 +112,16 @@
 </div>
 </body>
 <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-<script type="text/javascript" src="/node_modules/crypto-js/crypto-js.js"></script>
+<script type="text/javascript" src="/bower_components/crypto-js/crypto-js.js"></script>
+<script type="text/javascript" src="/bower_components/cryptico/cryptico.js"></script>
+<script type="text/javascript" src="/clientjs/client_chat.js"></script>
 <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
     var socket = io.connect();
     var newline = "<br>";
+    var key = "t";
+
+
     $( document ).ready(function(){
         document.getElementById('room').focus();
         document.getElementById('chatroom').style.display='none';
@@ -125,20 +130,19 @@
          LISTENER
          */
         socket.on('updateChat',function(user,data){
-            console.log("updateChat called: message = "+ data);
-            var message = data;
-
-            //Add Decryption of string here
-
+            //console.log("updateChat called: message = "+ data);
+            var ciphertext = data;
+            console.log(ciphertext);
+            var message = cryptico.decrypt(ciphertext,'key');
+            console.log('Decrypted text: ' + message);
             document.getElementById('chatlog').innerHTML = document.getElementById('chatlog').innerHTML + user + ": " + message + newline;
             document.getElementById('chatlog').scrollTop = document.getElementById('chatlog').scrollHeight;
+
         });
         socket.on('serverMessage',function(data){
             var message = data;
             document.getElementById('chatlog').innerHTML = document.getElementById('chatlog').innerHTML + message + newline;
         });
-
-
         socket.on('userJoined',function(data,users){
             var message = data;
             //Update chat that a new user has joined
@@ -156,17 +160,18 @@
         socket.on('updateRoomName',function(roomname){
             document.getElementById('chatHeader').innerHTML = "Channel: " + roomname;
         });
-
         socket.on('nameTaken',function(name){
             alert(name + " is already in use! Please enter new name to join channel");
         });
         socket.on('nameAvailable',function(){
             enterRoom();
         });
+        socket.on('updateKey',function(key){
+        });
 
 
         /*
-                Enter Button Listeners
+         Enter Button Listeners
          */
         $('#alias').keypress(function(e) {
             if(e.which == 13){
@@ -209,12 +214,24 @@
         document.getElementById('msg').focus();
 
     }
+
+    /*
+     var string = "This is a test";
+     var ciphertext = CryptoJS.AES.encrypt(string,'key');
+     console.log('Text to encrypt: ' + string);
+     console.log('Encrypted text: ' + ciphertext);
+     var bytes = CryptoJS.AES.decrypt(ciphertext.toString(),'key');
+     var plaintext = bytes.toString(CryptoJS.enc.Utf8);
+     console.log('Decrypted text: ' + plaintext);
+     */
     function submitMessage(){
         var message = $('#msg').val();
-
+        var ciphertext = cryptico.encrypt(message,'key');
         //Add encryption here
-
-        socket.emit("sendmsg",message);
+        console.log('Text to encrypt: ' + message);
+        console.log('Encrypted text: ' + ciphertext);
+        socket.emit("sendmsg",ciphertext);
+        console.log('Sent Message');
         document.getElementById('msg').value = '';
         document.getElementById('msg').focus();
 
@@ -222,6 +239,7 @@
     function updateUserList(connectedUsers){
         document.getElementById('userlist').innerHTML = connectedUsers;
     }
+
 </script>
 </body>
 </html>
