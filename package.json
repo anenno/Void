@@ -1,13 +1,13 @@
 {
   "name": "Void",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Encrypted Chat",
-  "dependencies": {
+  "dependencies":{
     "express": "^4.10.2",
     "socket.io": "^1.4.8",
     "socket.io-client":"^1.4.8",
     "striptags":"^2.1.1",
-    "crypto-js":"^3.1.8",
+    "cryptico":"",
     "bower":"^1.8.0"
   }
 }

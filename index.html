@@ -112,15 +112,13 @@
 </div>
 </body>
 <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-<script type="text/javascript" src="/bower_components/crypto-js/crypto-js.js"></script>
 <script type="text/javascript" src="/bower_components/cryptico/cryptico.js"></script>
-<script type="text/javascript" src="/clientjs/client_chat.js"></script>
 <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
     var socket = io.connect();
     var newline = "<br>";
     var rsakey = "";
-
+    var publicKey = "";
 
     $( document ).ready(function(){
         document.getElementById('room').focus();
@@ -130,31 +128,37 @@
          LISTENER
          */
         socket.on('updateChat',function(user,data){
-            console.log("updateChat called: message = "+ data);
-            var ciphertext = data;
-            console.log(ciphertext);
-            var message = cryptico.decrypt(ciphertext,rsakey);
-            console.log('Decrypted text: ' + message);
+
+            /*
+                decrypt message from server using rsaKey
+            */
+            var decryptionResult = cryptico.decrypt(data,rsakey);
+            var message = decryptionResult.plaintext;
+
+            /*
+            Update chatlog with message
+            */
             document.getElementById('chatlog').innerHTML = document.getElementById('chatlog').innerHTML + user + ": " + message + newline;
             document.getElementById('chatlog').scrollTop = document.getElementById('chatlog').scrollHeight;
 
         });
         socket.on('serverMessage',function(data){
             var message = data;
+
+
             document.getElementById('chatlog').innerHTML = document.getElementById('chatlog').innerHTML + message + newline;
         });
         socket.on('userJoined',function(data,users){
             var message = data;
-            //Update chat that a new user has joined
+
+
             document.getElementById('chatlog').innerHTML = document.getElementById('chatlog').innerHTML + message + newline;
-            //Update User List Div
             updateUserList(users);
         });
         socket.on('userLeft',function(data,users){
             var message = data;
-            //Update chat that a user has left
+
             document.getElementById('chatlog').innerHTML = document.getElementById('chatlog').innerHTML + message + newline;
-            //Update User List Div
             updateUserList(users)
         });
         socket.on('updateRoomName',function(roomname){
@@ -166,15 +170,9 @@
         socket.on('nameAvailable',function(){
             enterRoom();
         });
-        socket.on('updateKey',function(key){
-            console.log("update key called, key = " + key);
-            rsakey = key;
-            console.log("rsakey = " + rsakey);
-        });
-
 
         /*
-         Enter Button Listeners
+         'Enter' Button Listeners
          */
         $('#alias').keypress(function(e) {
             if(e.which == 13){
@@ -202,6 +200,7 @@
     function isValidName() {
         var alias = $('#alias').val();
         var roomname = $('#room').val();
+
         if (alias == "" || roomname == "") {
             alert("Please enter room and alias");
         } else {
@@ -211,7 +210,24 @@
     function enterRoom(){
         var alias = $('#alias').val();
         var roomname = $('#room').val();
+
+        /*
+            Generate RSA Key and Public Key
+            This key is the same as the servers key
+            All clients connected will have the same key as well
+
+         */
+        var pass = roomname;
+        var bits = 1024;
+        rsakey = cryptico.generateRSAKey(pass,bits);
+        publicKey = cryptico.publicKeyString(rsakey);
+
         socket.emit('joinroom',alias,roomname);
+
+        /*
+        Hide login divs
+        Display chatroom
+         */
         document.getElementById('chatroom').style.display='block';
         document.getElementById('aliasWindow').style.display='none';
         document.getElementById('msg').focus();
@@ -220,17 +236,26 @@
 
     function submitMessage(){
         var message = $('#msg').val();
-        var ciphertext = cryptico.encrypt(message,rsakey);
-        //Add encryption here
-        console.log('Text to encrypt: ' + message);
-        console.log('Encrypted text: ' + ciphertext);
-        socket.emit("sendmsg",ciphertext);
-        console.log('Sent Message');
+
+        /*
+        Encrypt message with public key, anyone with that publickey
+        can decrypt the message
+         */
+        var encryptionResult = cryptico.encrypt(message,publicKey);
+        socket.emit("sendmsg",encryptionResult.cipher);
+
+        /*
+        Clear the input box
+        Focus cursor back on input box
+         */
         document.getElementById('msg').value = '';
         document.getElementById('msg').focus();
 
     }
     function updateUserList(connectedUsers){
+        /*
+        Update user list div
+         */
         document.getElementById('userlist').innerHTML = connectedUsers;
     }
 

@@ -24,7 +24,6 @@ module.exports = function() {
         this.alias = alias;
         this.roomname = roomname;
         this.room = chatrooms[roomname];
-        this.key = key;
 
     };
 
@@ -39,7 +38,7 @@ module.exports = function() {
     name          -  Room name
     Currently Password,roomcreator, admin and maxUsers do nothing.
      */
-    this.Room = function(name,password,admin,roomCreator,key){
+    this.Room = function(name,password,admin,roomCreator,publicKey,key){
         this.connectedUsers = {};
         this.numberOfUsers = 0;
         this.name = name;
@@ -47,7 +46,8 @@ module.exports = function() {
         this.admin = admin;
         this.roomCreator = roomCreator;
         this.maxUsers = -1;
-        this.rsakey = key;
+        this.publicKey = publicKey;
+        this.rsaKey = key;
     };
 
     /*

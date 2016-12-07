@@ -4,9 +4,6 @@
 
 /*
     Load Module chat.js
- Crypto JS - Need to look into this
- https://github.com/brix/crypto-js/blob/develop/README.md
-
  */
 require('./chat.js')();
 
@@ -17,29 +14,6 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var striptags = require('striptags');
 var cryptico = require('cryptico');
-
-
-/*
-Encryption Test
- */
-
-//This is working. The problem is that if someone has access to the key then
-// it can easily be decrypted - should randomly generate a key for the room
-
-/*
-var CryptoJS = require('crypto-js');
-var string = "This is a test";
-var ciphertext = CryptoJS.AES.encrypt(string,'key');
-console.log('Text to encrypt: ' + string);
-console.log('Encrypted text: ' + ciphertext);
-var bytes = CryptoJS.AES.decrypt(ciphertext.toString(),'key');
-var plaintext = bytes.toString(CryptoJS.enc.Utf8);
-console.log('Decrypted text: ' + plaintext);
-*/
-//##############################################
-
-
-
 /*
     Express Routes
  */
@@ -110,10 +84,6 @@ io.sockets.on('connection',function(socket){
 
                     addUserToRoom(newUser,newUser.roomname);
                     var users = getUserList(_roomname);
-                    newUser.key = getRoom(_roomname).rsakey;
-
-
-
                     /*
                     Socket.io client emits
                     Update all clients a user has joined
@@ -122,47 +92,27 @@ io.sockets.on('connection',function(socket){
                      */
                     io.sockets.in(socket.roomName).emit('userJoined',socket.alias + " has joined the channel",users);
                     socket.emit('updateRoomName',socket.roomName);
-                    socket.emit('updateKey',newUser.key);
-
                 }else{
                     //Room has not been created
 
-
                     /*
-
-                     Create RSA key and store in room object
-                     This key will be passed to the user objects connected to room
-                     in order to encrpyt/decrypt messages
-
+                     Create Room RSA key from the roomname
+                     Create Room public key from the RSA key
                      */
-                    var keypass = roomname;
-                    var bits = roomname.bitlength;
-                    console.log("bit length of keypass = " + bits);
-                    var rsakey = cryptico.generateRSAKey(keypass,bits);
-                    console.log("room rsa key:");
-                    console.log(rsakey);
-
+                    var pass = roomname;
+                    var bits = 1024;
+                    var rsaKey = cryptico.generateRSAKey(pass,bits);
+                    var publicKey = cryptico.publicKeyString(rsaKey);
                     /*
                         Create Room Object
                      */
-                    var newRoom = new Room(_roomname,"",newUser,newUser,rsakey);
+                    var newRoom = new Room(_roomname,"",newUser,newUser,publicKey,rsaKey);
                     updateChatRooms(newRoom);
-
-                    /*
-                    Update key in user object to rooms key
-                     */
-                    newUser.key = rsakey;
-
                     /*
                     Add User to room
                      */
                     addUserToRoom(newUser,newUser.roomname);
-
-
-
                     var users = getUserList(_roomname);
-
-
                     /*
                      Socket.io client emits
                      Update all clients a user has joined
@@ -171,7 +121,6 @@ io.sockets.on('connection',function(socket){
                      */
                     io.sockets.in(socket.roomName).emit('userJoined',socket.alias + " has joined the channel",users);
                     socket.emit('updateRoomName',socket.roomName);
-                    socket.emit('updateKey',newUser.key);
                 }
             }else{
                 //Emit to client that name is not available and do not join room
@@ -180,14 +129,12 @@ io.sockets.on('connection',function(socket){
     });
 
     socket.on('sendmsg',function(data){
-        console.log('sendmsg called');
-        //STRIP HTML TAGS
-        //var strippedMsg = striptags(data);
-        //var strippedMsg = data;
-        console.log(data);
-        //Emit to all connected sockets the message
+        /*
+                Client encrypted message will be passed through.
+                The server only sees the encrypted message
+         */
+        console.log(socket.alias + ":" + data);
         io.sockets.in(socket.roomName).emit('updateChat',socket.alias,data);
-        console.log('emmitting message to clients');
 
     });
 
