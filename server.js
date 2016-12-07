@@ -13,15 +13,20 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var striptags = require('striptags');
+var cryptico = require('cryptico');
 /*
     Express Routes
  */
-//Serve index.html
+//Serve static files in public
+app.use(express.static(__dirname + '/public'));
+//Route to server bower (client side) libraries
+app.use('/bower_components',express.static(__dirname + '/bower_components'));
+//Route to serve client js files
+app.use('/clientjs',express.static(__dirname + '/clientjs'));
+
 app.get('/',function(req,res){
     res.sendFile(__dirname + '/index.html');
 });
-//Serve static files in public
-app.use(express.static(__dirname + '/public'));
 
 /*
     Listeners
@@ -44,6 +49,7 @@ io.sockets.on('connection',function(socket){
         var _alias = striptags(alias);
         var _roomname = striptags(roomname);
 
+
         if(isNameAvailable(_roomname,_alias) == true){
             socket.emit('nameAvailable');
         }else{
@@ -62,28 +68,57 @@ io.sockets.on('connection',function(socket){
                 socket.alias = _alias;
                 socket.roomName = _roomname;
                 socket.join(_roomname);
+
+                //Create user object
                 var newUser = new User(socket,socket.alias,socket.roomName);
                 socket.user = newUser;
 
                 /*
                 Room has already been created
                 Simply add user to room
+                Update key value in user object with RSA public key from room
                  */
                 if(roomExists(_roomname) == true){
+
+
+
                     addUserToRoom(newUser,newUser.roomname);
                     var users = getUserList(_roomname);
+                    /*
+                    Socket.io client emits
+                    Update all clients a user has joined
+                    Update clients room name
+                    Update clients RSA key to decrypt messages
+                     */
                     io.sockets.in(socket.roomName).emit('userJoined',socket.alias + " has joined the channel",users);
                     socket.emit('updateRoomName',socket.roomName);
-
                 }else{
+                    //Room has not been created
+
                     /*
-                    Room has not been created yet
-                    Create Room Object and add user to room
+                     Create Room RSA key from the roomname
+                     Create Room public key from the RSA key
                      */
-                    var newRoom = new Room(_roomname,"",newUser,newUser);
+                    var pass = roomname;
+                    var bits = 1024;
+                    var rsaKey = cryptico.generateRSAKey(pass,bits);
+                    var publicKey = cryptico.publicKeyString(rsaKey);
+                    /*
+                        Create Room Object
+                     */
+                    var newRoom = new Room(_roomname,"",newUser,newUser,publicKey,rsaKey);
                     updateChatRooms(newRoom);
+                    /*
+                    Add User to room
+                     */
                     addUserToRoom(newUser,newUser.roomname);
                     var users = getUserList(_roomname);
+                    /*
+                     Socket.io client emits
+                     Update all clients a user has joined
+                     Update client's room name
+                     Update client's RSA key to decrypt messages
+                     */
                     io.sockets.in(socket.roomName).emit('userJoined',socket.alias + " has joined the channel",users);
                     socket.emit('updateRoomName',socket.roomName);
                 }
@@ -94,10 +129,13 @@ io.sockets.on('connection',function(socket){
     });
 
     socket.on('sendmsg',function(data){
-        //STRIP HTML TAGS
-        var strippedMsg = striptags(data);
-        //Emit to all connected sockets the message
-        io.sockets.in(socket.roomName).emit('updateChat',socket.alias,strippedMsg);
+        /*
+                Client encrypted message will be passed through.
+                The server only sees the encrypted message
+         */
+        console.log(socket.alias + ":" + data);
+        io.sockets.in(socket.roomName).emit('updateChat',socket.alias,data);
+
     });
 
     socket.on('disconnect',function(){

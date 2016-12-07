@@ -16,9 +16,10 @@ module.exports = function() {
     alias - username entered
     roomname - roomname the user is connected to
     room - actual room object user is connected to
+    decryptKey - privateKey used to decrypt messages. This is set by the room
 
      */
-    this.User = function(socket,alias,roomname){
+    this.User = function(socket,alias,roomname,key){
         this.socket = socket;
         this.alias = alias;
         this.roomname = roomname;
@@ -37,7 +38,7 @@ module.exports = function() {
     name          -  Room name
     Currently Password,roomcreator, admin and maxUsers do nothing.
      */
-    this.Room = function(name,password,admin,roomCreator){
+    this.Room = function(name,password,admin,roomCreator,publicKey,key){
         this.connectedUsers = {};
         this.numberOfUsers = 0;
         this.name = name;
@@ -45,6 +46,8 @@ module.exports = function() {
         this.admin = admin;
         this.roomCreator = roomCreator;
         this.maxUsers = -1;
+        this.publicKey = publicKey;
+        this.rsaKey = key;
     };
 
     /*
@@ -189,6 +192,9 @@ module.exports = function() {
             }
         }
         return userListString;
+    }
+    this.generateKey = function(){
+
     }
 };
 
