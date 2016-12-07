@@ -47,7 +47,7 @@ module.exports = function() {
         this.admin = admin;
         this.roomCreator = roomCreator;
         this.maxUsers = -1;
-        this.decryptKey = key;
+        this.rsakey = key;
     };
 
     /*

@@ -95,31 +95,83 @@ io.sockets.on('connection',function(socket){
                 socket.roomName = _roomname;
                 socket.join(_roomname);
 
-                //Generate public key for user
-                var newUser = new User(socket,socket.alias,socket.roomName,socket.roomName);
+                //Create user object
+                var newUser = new User(socket,socket.alias,socket.roomName);
                 socket.user = newUser;
 
                 /*
                 Room has already been created
                 Simply add user to room
+                Update key value in user object with RSA public key from room
                  */
                 if(roomExists(_roomname) == true){
+
+
+
                     addUserToRoom(newUser,newUser.roomname);
                     var users = getUserList(_roomname);
+                    newUser.key = getRoom(_roomname).rsakey;
+
+
+
+                    /*
+                    Socket.io client emits
+                    Update all clients a user has joined
+                    Update clients room name
+                    Update clients RSA key to decrypt messages
+                     */
                     io.sockets.in(socket.roomName).emit('userJoined',socket.alias + " has joined the channel",users);
                     socket.emit('updateRoomName',socket.roomName);
+                    socket.emit('updateKey',newUser.key);
 
                 }else{
+                    //Room has not been created
+
+
                     /*
-                    Room has not been created yet
-                    Create Room Object and add user to room
+
+                     Create RSA key and store in room object
+                     This key will be passed to the user objects connected to room
+                     in order to encrpyt/decrypt messages
+
                      */
-                    var newRoom = new Room(_roomname,"",newUser,newUser);
+                    var keypass = roomname;
+                    var bits = roomname.bitlength;
+                    console.log("bit length of keypass = " + bits);
+                    var rsakey = cryptico.generateRSAKey(keypass,bits);
+                    console.log("room rsa key:");
+                    console.log(rsakey);
+
+                    /*
+                        Create Room Object
+                     */
+                    var newRoom = new Room(_roomname,"",newUser,newUser,rsakey);
                     updateChatRooms(newRoom);
+
+                    /*
+                    Update key in user object to rooms key
+                     */
+                    newUser.key = rsakey;
+
+                    /*
+                    Add User to room
+                     */
                     addUserToRoom(newUser,newUser.roomname);
+
+
+
                     var users = getUserList(_roomname);
+
+
+                    /*
+                     Socket.io client emits
+                     Update all clients a user has joined
+                     Update client's room name
+                     Update client's RSA key to decrypt messages
+                     */
                     io.sockets.in(socket.roomName).emit('userJoined',socket.alias + " has joined the channel",users);
                     socket.emit('updateRoomName',socket.roomName);
+                    socket.emit('updateKey',newUser.key);
                 }
             }else{
                 //Emit to client that name is not available and do not join room

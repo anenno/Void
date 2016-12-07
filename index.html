@@ -119,7 +119,7 @@
 <script>
     var socket = io.connect();
     var newline = "<br>";
-    var key = "t";
+    var rsakey = "";
 
 
     $( document ).ready(function(){
@@ -130,10 +130,10 @@
          LISTENER
          */
         socket.on('updateChat',function(user,data){
-            //console.log("updateChat called: message = "+ data);
+            console.log("updateChat called: message = "+ data);
             var ciphertext = data;
             console.log(ciphertext);
-            var message = cryptico.decrypt(ciphertext,'key');
+            var message = cryptico.decrypt(ciphertext,rsakey);
             console.log('Decrypted text: ' + message);
             document.getElementById('chatlog').innerHTML = document.getElementById('chatlog').innerHTML + user + ": " + message + newline;
             document.getElementById('chatlog').scrollTop = document.getElementById('chatlog').scrollHeight;
@@ -167,6 +167,9 @@
             enterRoom();
         });
         socket.on('updateKey',function(key){
+            console.log("update key called, key = " + key);
+            rsakey = key;
+            console.log("rsakey = " + rsakey);
         });
 
 
@@ -215,18 +218,9 @@
 
     }
 
-    /*
-     var string = "This is a test";
-     var ciphertext = CryptoJS.AES.encrypt(string,'key');
-     console.log('Text to encrypt: ' + string);
-     console.log('Encrypted text: ' + ciphertext);
-     var bytes = CryptoJS.AES.decrypt(ciphertext.toString(),'key');
-     var plaintext = bytes.toString(CryptoJS.enc.Utf8);
-     console.log('Decrypted text: ' + plaintext);
-     */
     function submitMessage(){
         var message = $('#msg').val();
-        var ciphertext = cryptico.encrypt(message,'key');
+        var ciphertext = cryptico.encrypt(message,rsakey);
         //Add encryption here
         console.log('Text to encrypt: ' + message);
         console.log('Encrypted text: ' + ciphertext);
