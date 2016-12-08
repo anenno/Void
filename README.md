@@ -1,22 +1,20 @@
 # Void
-Encrypted and secure text communication as well as file transmission.
+Encrypted and secure text communication
 
-Testing:
-In order to test this properly you need to have node.js installed.
+Message encryption is done via AES using rsakeys and publickeys.Encryption is done on client side and decryption is done client side. The only text that the server sees is an encrypted message.
 
-Windows:
-https://nodejs.org/en/
-Linux:
+
+Installation Directions:
+
+Linux Server:
+1) Install nodejs on the server
 sudo apt-get install nodejs
-
-Windows: Run Node.js Command Prompt
-Linux: Open Terminal
-
-Browse to src directory where index.js is saved
-To start server enter the following, node index.js
-You should see "Listening on*: PortNumber"
-In the browser address bar enter 
-http://localhost:5000/
+sudo apt-get install nodejs-legacy
+2) Clone git repository into desired directory
+3) All dependencies should be included the repository, but to be sure run the following command from the project directory
+npm install -d
+4) Start server - by default the port it runs on is 5000
+node server.js
 
 
 
