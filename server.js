@@ -191,7 +191,6 @@ io.sockets.on('connection',function(socket){
         debuglog("Room: " + socket.roomName);
         debuglog("Sender: " + socket.alias);
         debuglog("Message: " + data);
-        console.log(socket.alias + ":" + data);
         io.sockets.in(socket.roomName).emit('updateChat',socket.alias,data);
 
     });
