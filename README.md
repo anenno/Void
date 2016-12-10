@@ -18,5 +18,12 @@ npm install -d
 node server.js
 
 
+For HTTPS Server
+
+Cert files should be created once using the following commands on server
+
+
+
+
 
 
