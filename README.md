@@ -12,8 +12,9 @@ sudo apt-get install nodejs
 sudo apt-get install nodejs-legacy
 2) Clone git repository into desired directory
 3) All dependencies should be included the repository, but to be sure run the following command from the project directory
+sudo apt-get install npm
 npm install -d
-4) Start server - by default the port it runs on is 5000
+4) Start server - by default the port it runs on is 5000. You can also add command line arguments to specifiy port (-p PORTNUMBER and debug (-d)
 node server.js
 
 
