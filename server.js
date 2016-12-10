@@ -7,13 +7,69 @@
  */
 require('./chat.js')();
 
+/*
+Command Line Variables
+ */
 var PORT = 5000;
+var DEBUG = false;
+
+/*
+Variable initializations
+ */
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var striptags = require('striptags');
 var cryptico = require('cryptico');
+
+/*
+Command Line Arg Setup
+ */
+const commandLineArgs = require('command-line-args');
+const optionDefinitions = [
+    {name: 'PORT', alias: 'p', type: Number},
+    {name: 'DEBUG',alias: 'd', type: Boolean}
+];
+
+/*
+Set Command Line Variables based on commands
+ */
+const cmdoptions = commandLineArgs(optionDefinitions);
+if(cmdoptions.PORT == undefined){
+    PORT = 5000;
+    /*
+    START SERVER
+     */
+    http.listen(PORT,function(){
+        debuglog("Server Started: listening on port " + PORT);
+    });
+}else if(isNaN(cmdoptions.PORT) == true){
+    console.log("usage: \n" +
+                "-p: Enter port number, If no port number entered default is 5000 \n" +
+                "-d: Turns on debug, prints output to console. Default is OFF");
+    console.log("Examples:")
+    console.log("node server.js");
+    console.log("node server.js -d");
+    console.log("node server.js -p PORTNUMBER -d");
+
+
+}else {
+    try {
+        PORT = cmdoptions.PORT;
+        http.listen(PORT, function () {
+            debuglog("Server Started: listening on port " + PORT);
+        });
+    }catch(err){
+        console.log("Port in use, server not started");
+    }
+}
+DEBUG = cmdoptions.DEBUG;
+if(cmdoptions.DEBUG == true){
+    debuglog("DEBUG ON");
+}
+
+
 /*
     Express Routes
  */
@@ -28,12 +84,7 @@ app.get('/',function(req,res){
     res.sendFile(__dirname + '/index.html');
 });
 
-/*
-    Listeners
- */
-http.listen(PORT,function(){
-    console.log('listening on*:'+PORT);
-});
+
 
 /*
     Socket.IO Functions
@@ -92,6 +143,7 @@ io.sockets.on('connection',function(socket){
                      */
                     io.sockets.in(socket.roomName).emit('userJoined',socket.alias + " has joined the channel",users);
                     socket.emit('updateRoomName',socket.roomName);
+                    debuglog(socket.alias + " has joined room " + socket.roomName);
                 }else{
                     //Room has not been created
 
@@ -121,6 +173,8 @@ io.sockets.on('connection',function(socket){
                      */
                     io.sockets.in(socket.roomName).emit('userJoined',socket.alias + " has joined the channel",users);
                     socket.emit('updateRoomName',socket.roomName);
+                    debuglog("Room " + socket.roomName + " has been created");
+                    debuglog(socket.alias + " has joined room " + socket.roomName);
                 }
             }else{
                 //Emit to client that name is not available and do not join room
@@ -133,6 +187,10 @@ io.sockets.on('connection',function(socket){
                 Client encrypted message will be passed through.
                 The server only sees the encrypted message
          */
+        debuglog("Message Received");
+        debuglog("Room: " + socket.roomName);
+        debuglog("Sender: " + socket.alias);
+        debuglog("Message: " + data);
         console.log(socket.alias + ":" + data);
         io.sockets.in(socket.roomName).emit('updateChat',socket.alias,data);
 
@@ -152,21 +210,32 @@ io.sockets.on('connection',function(socket){
              */
             if(numUsers == 1){
                 //Remove user from room and delete room
+                debuglog(socket.alias + " has left room " + socket.roomName);
+
                 removeUserFromRoom(socket.alias,socket.roomName);
                 deleteRoom(socket.roomName);
                 socket.leave(socket.roomName);
+
             }else{
                 /*
                 Only remove user from room and update user list
                 Emit to all connected users that a user has left
                 Update user list in room as well
                  */
+                debuglog(socket.alias + " has left room " + socket.roomName);
 
                 removeUserFromRoom(socket.alias,socket.roomName);
                 var users = getUserList(roomname);
                 io.sockets.in(socket.roomName).emit('userLeft',socket.alias + " has left the channel",users);
                 socket.leave(socket.roomName);
+
             }
         }
     });
 });
+function debuglog(string){
+    //Will only print to console if debug is set
+    if(DEBUG == true){
+        console.log("DEBUG: " + string);
+    }
+}
